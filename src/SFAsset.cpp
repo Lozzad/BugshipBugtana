@@ -80,6 +80,11 @@ void SFAsset::GoNorth() {
     bbox->Translate(v);
 }
 
+void SFAsset::GoSouth() {
+	Vector2 v = Vector2(0.0f, 5.0f);
+	bbox->Translate(v);
+}
+
 bool SFAsset::CollidesWith(shared_ptr<SFAsset> other) {
     return bbox->CollidesWith(other->bbox);
 }

@@ -30,24 +30,30 @@ SFApp::~SFApp() {}
  * These are timer or keyboard events.
  */
 void SFApp::OnEvent(SFEvent& event) {
-    SFEVENT the_event = event.GetCode();
-    switch (the_event) {
-    case SFEVENT_QUIT:
-        is_running = false;
-        break;
-    case SFEVENT_UPDATE:
-        OnUpdate();
-        OnRender();
-        break;
-    case SFEVENT_PLAYER_LEFT:
-        player->GoWest();
-        break;
-    case SFEVENT_PLAYER_RIGHT:
-        player->GoEast();
-        break;
-    case SFEVENT_FIRE:
-        FireProjectile();
-        break;
+    	SFEVENT the_event = event.GetCode();
+    	switch (the_event) {
+    		case SFEVENT_QUIT:
+        		is_running = false;
+        		break;
+    		case SFEVENT_UPDATE:
+        		OnUpdate();
+        		OnRender();
+        		break;
+		case SFEVENT_PLAYER_UP:
+			player->GoNorth();
+			break;
+		case SFEVENT_PLAYER_DOWN:
+			player->GoSouth();
+			break;
+    		case SFEVENT_PLAYER_LEFT:
+        		player->GoWest();
+        		break;
+    		case SFEVENT_PLAYER_RIGHT:
+        		player->GoEast();
+        		break;
+    		case SFEVENT_FIRE:
+        		FireProjectile();
+        		break;
     }
 }
 
