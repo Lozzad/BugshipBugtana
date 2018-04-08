@@ -111,4 +111,7 @@ void SFAsset::HandleCollision() {
 	if (SFASSET_PROJECTILE == type || SFASSET_WALL == type) {
 		SetNotAlive();
 	}
+	if (SFASSET_PLAYER == type || SFASSET_WALL == type) {
+		GoSouth();
+	}
 }

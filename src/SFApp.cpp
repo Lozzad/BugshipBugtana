@@ -119,6 +119,12 @@ void SFApp::OnUpdate() {
         	}
 		}
     }
+	for (auto w : walls) {
+		if (w->CollidesWith(player)) {
+			player->HandleCollision();
+		}
+	}
+	
 
     // 3. Remove dead aliens (the long way)
     list<shared_ptr<SFAsset>> tmpA;
