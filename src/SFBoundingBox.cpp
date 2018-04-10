@@ -40,3 +40,4 @@ SDL_Rect SFBoundingBox::GetBox() {
 bool SFBoundingBox::CollidesWith(const shared_ptr<SFBoundingBox> b) {
     return SDL_HasIntersection(&box, &b->box) == SDL_TRUE;
 }
+

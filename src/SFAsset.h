@@ -14,6 +14,8 @@ using namespace std;
 #include "SFEvent.h"
 #include "SFWindow.h"
 #include "SFBoundingBox.h"
+#include "SFPlayer.h"
+#include "SFApp.h"
 
 /**
  * We could create SFPlayer, SFProjectile and SFAsset which are subclasses
@@ -47,7 +49,7 @@ public:
     virtual shared_ptr<SFBoundingBox> GetBoundingBox();
     
 private:
-    SDL_Texture               * sprite;
+    SDL_Texture             *	sprite;
     shared_ptr<SFBoundingBox>   bbox;
     SFASSETTYPE                 type;
     std::shared_ptr<SFWindow>   sf_window;

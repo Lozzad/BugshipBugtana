@@ -10,6 +10,7 @@ using namespace std;
 #include "SFCommon.h"
 #include "SFEvent.h"
 #include "SFAsset.h"
+#include "SFPlayer.h"
 
 /**
  * Represents the StarshipFontana application.  It has responsibilities for:
@@ -28,12 +29,14 @@ public:
     void 	OnRender();
 
 	void 	FireProjectile();
+	
 private:
     bool is_running;
+	
+	SFPlayer				SFPlayer1;    
+	shared_ptr<SFWindow> 	window;
 
-    shared_ptr<SFWindow> window;
-
-    shared_ptr<SFAsset> player;
+    shared_ptr<SFAsset> 	player;
     
     list<shared_ptr<SFAsset> > projectiles;
     list<shared_ptr<SFAsset> > aliens;

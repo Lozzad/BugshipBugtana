@@ -5,6 +5,7 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : is_running(true), window(window
     int canvas_h = window->GetHeight();					//-> for pointers, . for the obj
 	
 	//place the player    
+	SFPlayer SFPlayer1;	
 	player = make_shared<SFAsset>(SFASSET_PLAYER, window);    
 	auto player_pos = Point2(canvas_w / 2 - player->GetBoundingBox()->GetWidth() / 2, canvas_h - 	player->GetBoundingBox()->GetHeight());
     player->SetPosition(player_pos);
@@ -12,7 +13,7 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : is_running(true), window(window
 
 	//place the aliens
     const int number_of_aliens = 10; 
-	for (int i = 0); i < number_of_aliens; i++) {
+	for (int i = 0; i < number_of_aliens; i++) {
         // place an alien at width/number_of_aliens * i
         auto alien = make_shared<SFAsset>(SFASSET_ALIEN, window);
         auto pos = Point2((canvas_w / number_of_aliens) * i + alien->GetBoundingBox()->GetWidth() / 2, 100.0f);
@@ -65,7 +66,10 @@ void SFApp::OnEvent(SFEvent& event) {
        		player->GoEast();
        		break;
 		case SFEVENT_FIRE:
-			FireProjectile();
+			if (SFPlayer1.GetCharge() >= 240) {
+				FireProjectile();
+				SFPlayer1.ResetCharge();
+			}
 			break;
     }
 }
@@ -90,6 +94,7 @@ void SFApp::OnUpdate() {
 			p->GoNorth();
 		}
     }
+	SFPlayer1.IncrementCharge();
 	
     // coins
     for (auto c : coins) {
