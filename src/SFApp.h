@@ -3,6 +3,7 @@
 
 #include <memory>   // Pull in std::shared_ptr
 #include <list>     // Pull in list
+#include <string>
 
 using namespace std;
 
@@ -21,12 +22,12 @@ public:
     SFApp(std::shared_ptr<SFWindow>);
     ~SFApp();
     
-    void OnEvent(SFEvent &);
-    void StartMainLoop();
-    void OnUpdate();
-    void OnRender();
+    void 	OnEvent(SFEvent &);
+    void 	StartMainLoop();
+    void 	OnUpdate();
+    void 	OnRender();
 
-    void FireProjectile();
+	void 	FireProjectile();
 private:
     bool is_running;
 

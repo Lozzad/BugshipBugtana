@@ -39,6 +39,8 @@ public:
     virtual void		GoSouth();
     virtual void      	SetNotAlive();
     virtual bool      	IsAlive();
+	//virtual bool		CanFire();
+	//virtual const char*	GetPlayerSprite();
     virtual void      	HandleCollision();
 
     virtual bool                      CollidesWith(shared_ptr<SFAsset>);

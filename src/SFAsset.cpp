@@ -4,7 +4,7 @@ SFAsset::SFAsset(SFASSETTYPE type, std::shared_ptr<SFWindow> window) : type(type
 
     switch (type) {
     case SFASSET_PLAYER:
-        sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/player.png");
+        sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/player0.png");
         break;
     case SFASSET_PROJECTILE:
         sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/projectile.png");
@@ -103,6 +103,30 @@ void SFAsset::SetNotAlive() {
 bool SFAsset::IsAlive() {
     return (SFASSET_DEAD != type);
 }
+
+/*bool SFAsset::CanFire() {
+	int clvl = GetClvl();
+	if (clvl>=400) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+const char* SFAsset::GetPlayerSprite() {
+	int clvl = GetClvl();
+	if (clvl < 100) {
+		return "assets/player0.png";
+	} else if (clvl >= 100 && clvl < 200) {
+		return "assets/player1.png";
+	} else if (clvl >= 200 && clvl < 300) {
+		return "assets/player2.png";
+	} else if (clvl >= 300 && clvl < 400) {
+		return "assets/player3.png";
+	} else if (clvl >= 400) {
+		return "assets/player4.png";
+	}
+}*/
 
 void SFAsset::HandleCollision() {
     if (SFASSET_PROJECTILE == type || SFASSET_ALIEN == type) {

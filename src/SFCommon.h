@@ -18,5 +18,6 @@ private:
 // Forward declaration of classes
 class SFEvent;
 class SFAsset;
+class SFPlayer;
 
 #endif

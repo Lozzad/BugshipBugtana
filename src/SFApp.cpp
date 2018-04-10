@@ -4,14 +4,15 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : is_running(true), window(window
     int canvas_w = window->GetWidth();
     int canvas_h = window->GetHeight();					//-> for pointers, . for the obj
 	
-	//place the player
-    player = make_shared<SFAsset>(SFASSET_PLAYER, window);    
+	//place the player    
+	player = make_shared<SFAsset>(SFASSET_PLAYER, window);    
 	auto player_pos = Point2(canvas_w / 2 - player->GetBoundingBox()->GetWidth() / 2, canvas_h - 	player->GetBoundingBox()->GetHeight());
     player->SetPosition(player_pos);
+	
 
 	//place the aliens
-    const int number_of_aliens = 10;
-    for (int i = 0; i < number_of_aliens; i++) {
+    const int number_of_aliens = 10; 
+	for (int i = 0); i < number_of_aliens; i++) {
         // place an alien at width/number_of_aliens * i
         auto alien = make_shared<SFAsset>(SFASSET_ALIEN, window);
         auto pos = Point2((canvas_w / number_of_aliens) * i + alien->GetBoundingBox()->GetWidth() / 2, 100.0f);
@@ -65,7 +66,7 @@ void SFApp::OnEvent(SFEvent& event) {
        		break;
 		case SFEVENT_FIRE:
 			FireProjectile();
-      		break;
+			break;
     }
 }
 
@@ -89,7 +90,7 @@ void SFApp::OnUpdate() {
 			p->GoNorth();
 		}
     }
-
+	
     // coins
     for (auto c : coins) {
         c->GoSouth();
@@ -189,6 +190,7 @@ void SFApp::OnRender() {
     // 3. Switch the off-screen buffer to be on-screen
     window->ShowScreen();
 }
+		
 
 void SFApp::FireProjectile() {
     auto bullet = make_shared<SFAsset>(SFASSET_PROJECTILE, window);
