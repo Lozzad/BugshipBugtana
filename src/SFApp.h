@@ -28,8 +28,8 @@ public:
     void 	OnUpdate();
     void 	OnRender();
 
-	void 	FireProjectile();
-	
+	void	FireProjectile();
+	//int		ReturnCharge();	
 private:
     bool is_running;
 	

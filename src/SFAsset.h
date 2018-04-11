@@ -14,8 +14,7 @@ using namespace std;
 #include "SFEvent.h"
 #include "SFWindow.h"
 #include "SFBoundingBox.h"
-#include "SFPlayer.h"
-#include "SFApp.h"
+//#include "SFPlayer.h"
 
 /**
  * We could create SFPlayer, SFProjectile and SFAsset which are subclasses
@@ -23,7 +22,7 @@ using namespace std;
  * enum to mark the type of the SFAsset.  If we add more asset types then
  * the subclassing strategy becomes a better option.
  */
-enum SFASSETTYPE { SFASSET_DEAD, SFASSET_PLAYER, SFASSET_PROJECTILE, SFASSET_ALIEN, SFASSET_COIN, SFASSET_WALL };
+enum SFASSETTYPE { SFASSET_DEAD, SFASSET_PLAYER0, SFASSET_PLAYER1, SFASSET_PLAYER2, SFASSET_PLAYER3, SFASSET_PLAYER4, SFASSET_PROJECTILE, SFASSET_ALIEN, SFASSET_COIN, SFASSET_WALL };
 
 class SFAsset {
 public:
@@ -41,15 +40,14 @@ public:
     virtual void		GoSouth();
     virtual void      	SetNotAlive();
     virtual bool      	IsAlive();
-	//virtual bool		CanFire();
-	//virtual const char*	GetPlayerSprite();
     virtual void      	HandleCollision();
+	virtual void 		SetPlayerSprite(int Charge);
 
     virtual bool                      CollidesWith(shared_ptr<SFAsset>);
     virtual shared_ptr<SFBoundingBox> GetBoundingBox();
     
-private:
-    SDL_Texture             *	sprite;
+private:   
+	SDL_Texture             *	sprite;
     shared_ptr<SFBoundingBox>   bbox;
     SFASSETTYPE                 type;
     std::shared_ptr<SFWindow>   sf_window;

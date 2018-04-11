@@ -1,6 +1,8 @@
 #include "SFPlayer.h"
 
-SFPlayer::SFPlayer(int Health, int Charge) : Health(Health), Charge(Charge) {}
+SFPlayer::SFPlayer() : Health(Health), Charge(Charge) {}
+
+SFPlayer::~SFPlayer() {}
 
 int SFPlayer::GetCharge() const { 
 	return Charge;
@@ -35,6 +37,7 @@ void SFPlayer::IncrementCharge() {
 		Charge++;
 	}
 }
+
 
 
 

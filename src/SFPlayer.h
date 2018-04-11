@@ -2,11 +2,12 @@
 #define SFPLAYER_H
 
 class SFPlayer {
-private:
+private:	
 	int Health, Charge;
 
 public: 
-	SFPlayer(int Health = 10, int Charge = 0);
+	SFPlayer();
+	~SFPlayer();
 		
 	int			GetCharge() const;
 	int			GetHealth() const;

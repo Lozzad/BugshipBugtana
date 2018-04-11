@@ -5,8 +5,8 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : is_running(true), window(window
     int canvas_h = window->GetHeight();					//-> for pointers, . for the obj
 	
 	//place the player    
-	SFPlayer SFPlayer1;	
-	player = make_shared<SFAsset>(SFASSET_PLAYER, window);    
+	SFPlayer SFPlayer1();	
+	player = make_shared<SFAsset>(SFASSET_PLAYER0, window);    
 	auto player_pos = Point2(canvas_w / 2 - player->GetBoundingBox()->GetWidth() / 2, canvas_h - 	player->GetBoundingBox()->GetHeight());
     player->SetPosition(player_pos);
 	
@@ -95,6 +95,7 @@ void SFApp::OnUpdate() {
 		}
     }
 	SFPlayer1.IncrementCharge();
+	player->SetPlayerSprite(SFPlayer1.GetCharge());
 	
     // coins
     for (auto c : coins) {
@@ -204,3 +205,5 @@ void SFApp::FireProjectile() {
     bullet->SetPosition(pos);
     projectiles.push_back(bullet);
 }
+
+
