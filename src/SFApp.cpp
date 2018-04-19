@@ -5,8 +5,8 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : is_running(true), window(window
     int canvas_h = window->GetHeight();					//-> for pointers, . for the obj
 	
 	//place the player    
-	SFPlayer SFPlayer1();	
-	player = make_shared<SFAsset>(SFASSET_PLAYER0, window);    
+	SFPlayer1 = make_shared<SFPlayer>(); 	
+	player = make_shared<SFAsset>(SFASSET_PLAYER, window);    
 	auto player_pos = Point2(canvas_w / 2 - player->GetBoundingBox()->GetWidth() / 2, canvas_h - 	player->GetBoundingBox()->GetHeight());
     player->SetPosition(player_pos);
 	
@@ -66,9 +66,9 @@ void SFApp::OnEvent(SFEvent& event) {
        		player->GoEast();
        		break;
 		case SFEVENT_FIRE:
-			if (SFPlayer1.GetCharge() >= 240) {
+			if (SFPlayer1->GetCharge() >= 240) {
 				FireProjectile();
-				SFPlayer1.ResetCharge();
+				SFPlayer1->ResetCharge();
 			}
 			break;
     }
@@ -94,8 +94,8 @@ void SFApp::OnUpdate() {
 			p->GoNorth();
 		}
     }
-	SFPlayer1.IncrementCharge();
-	player->SetPlayerSprite(SFPlayer1.GetCharge());
+	SFPlayer1->IncrementCharge();
+	//player->SetPlayerSprite(SFPlayer1.GetCharge());
 	
     // coins
     for (auto c : coins) {
@@ -206,4 +206,21 @@ void SFApp::FireProjectile() {
     projectiles.push_back(bullet);
 }
 
+SFPlayer SFApp::ReturnPlayer(SFPlayer
+/*const char* SFApp::GetPlayerSprite() {
+	if (SFPlayer1->GetCharge() <= 59) {
+		return "assets/player0.png";
+	} 
+	else if (SFPlayer1->GetCharge() >= 60 && SFPlayer1->GetCharge() <= 119) {
+		return "assets/player1.png";
+	}
+	else if (SFPlayer1->GetCharge() >= 120 && SFPlayer1->GetCharge() <= 179) {
+		return "assets/player2.png";
+	} else if (SFPlayer1->GetCharge() >= 180 && SFPlayer1->GetCharge() <= 239) {
+		return "assets/player3.png";
+	} else if (SFPlayer1->GetCharge() >= 240) {
+		return "assets/player4.png";
+	}
+}
+*/
 

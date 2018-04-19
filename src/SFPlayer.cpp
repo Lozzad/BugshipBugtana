@@ -1,18 +1,14 @@
 #include "SFPlayer.h"
 
-SFPlayer::SFPlayer() : Health(Health), Charge(Charge) {}
+SFPlayer::SFPlayer() : Charge(Charge) {}
 
 SFPlayer::~SFPlayer() {}
 
-int SFPlayer::GetCharge() const { 
+int SFPlayer::GetCharge() { 
 	return Charge;
-} 
-
-int SFPlayer::GetHealth() const {
-	return Health;
 }
 
-const char* SFPlayer::GetPlayerSprite() {
+/*const char* SFPlayer::GetPlayerSprite() {
 	if (Charge < 60) {
 		return "assets/player0.png";
 	} 
@@ -27,7 +23,7 @@ const char* SFPlayer::GetPlayerSprite() {
 		return "assets/player4.png";
 	}
 }
-
+*/
 void SFPlayer::ResetCharge() {
 	Charge = 0;
 }

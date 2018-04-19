@@ -1,18 +1,20 @@
 #ifndef SFPLAYER_H
 #define SFPLAYER_H
 
+#include <memory>
+
 class SFPlayer {
 private:	
-	int Health, Charge;
+	std::shared_ptr<SFPlayer> Player();	
+	int Charge;
 
 public: 
 	SFPlayer();
 	~SFPlayer();
 		
-	int			GetCharge() const;
-	int			GetHealth() const;
+	int			GetCharge();
 
-	const char*	GetPlayerSprite();
+	//const char*	GetPlayerSprite();
 	void		ResetCharge();
 	void		IncrementCharge();
 };

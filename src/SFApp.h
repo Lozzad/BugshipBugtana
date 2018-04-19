@@ -28,12 +28,12 @@ public:
     void 	OnUpdate();
     void 	OnRender();
 
-	void	FireProjectile();
-	//int		ReturnCharge();	
+	void		FireProjectile();
+	const char* GetPlayerSprite();	
 private:
     bool is_running;
 	
-	SFPlayer				SFPlayer1;    
+	shared_ptr<SFPlayer>	SFPlayer1;    
 	shared_ptr<SFWindow> 	window;
 
     shared_ptr<SFAsset> 	player;
