@@ -29,7 +29,7 @@ public:
     void 	OnRender();
 
 	void		FireProjectile();
-	//const char* GetPlayerSprite();	
+	
 private:
     bool is_running;
 	

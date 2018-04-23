@@ -95,7 +95,7 @@ void SFApp::OnUpdate() {
 		}
     }
 	SFPlayer1.IncrementCharge();
-	//player->SetPlayerSprite(SFPlayer1.GetCharge());
+	player->Charge(SFPlayer1.GetCharge());
 	
     // coins
     for (auto c : coins) {
@@ -205,22 +205,3 @@ void SFApp::FireProjectile() {
     bullet->SetPosition(pos);
     projectiles.push_back(bullet);
 }
-
-//SFPlayer SFApp::ReturnPlayer(SFPlayer
-/*const char* SFApp::GetPlayerSprite() {
-	if (SFPlayer1->GetCharge() <= 59) {
-		return "assets/player0.png";
-	} 
-	else if (SFPlayer1->GetCharge() >= 60 && SFPlayer1->GetCharge() <= 119) {
-		return "assets/player1.png";
-	}
-	else if (SFPlayer1->GetCharge() >= 120 && SFPlayer1->GetCharge() <= 179) {
-		return "assets/player2.png";
-	} else if (SFPlayer1->GetCharge() >= 180 && SFPlayer1->GetCharge() <= 239) {
-		return "assets/player3.png";
-	} else if (SFPlayer1->GetCharge() >= 240) {
-		return "assets/player4.png";
-	}
-}
-*/
-

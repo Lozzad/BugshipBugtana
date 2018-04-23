@@ -7,13 +7,11 @@ class SFPlayer {
 private:	
 	SFPlayer Player();	
 	int Charge;
-	const int FULL_CHARGE = 120;
 
 public: 
 	SFPlayer();
 	~SFPlayer();
 	
-	bool		CanFire();	
 	int			GetCharge();
 
 	//const char*	GetPlayerSprite();
