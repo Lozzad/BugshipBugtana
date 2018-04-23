@@ -3,7 +3,7 @@
 SFAsset::SFAsset(SFASSETTYPE type, std::shared_ptr<SFWindow> window) : type(type), sf_window(window) {
 	switch (type) {	
 	case SFASSET_PLAYER:
-		sprite = IMG_LoadTexture(sf_window->getRenderer(), GetPlayerSprite());
+		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/player0.png");
         break;
     case SFASSET_PROJECTILE:
         sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/projectile.png");
@@ -103,7 +103,7 @@ bool SFAsset::IsAlive() {
     return (SFASSET_DEAD != type);
 }
 
-const char* SFAsset::GetPlayerSprite() {
+/* const char* SFAsset::GetPlayerSprite() {
 	if (SFPlayer1->GetCharge() <= 59) {
 		return "assets/player0.png";
 	} 
@@ -117,7 +117,7 @@ const char* SFAsset::GetPlayerSprite() {
 	} else if (SFPlayer1->GetCharge() >= 240) {
 		return "assets/player4.png";
 	}
-}
+} */
 
 void SFAsset::HandleCollision() {
     if (SFASSET_PROJECTILE == type || SFASSET_ALIEN == type) {

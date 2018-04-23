@@ -29,11 +29,11 @@ public:
     void 	OnRender();
 
 	void		FireProjectile();
-	const char* GetPlayerSprite();	
+	//const char* GetPlayerSprite();	
 private:
     bool is_running;
 	
-	shared_ptr<SFPlayer>	SFPlayer1;    
+	SFPlayer 				SFPlayer1;    
 	shared_ptr<SFWindow> 	window;
 
     shared_ptr<SFAsset> 	player;

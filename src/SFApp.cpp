@@ -5,10 +5,10 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : is_running(true), window(window
     int canvas_h = window->GetHeight();					//-> for pointers, . for the obj
 	
 	//place the player    
-	SFPlayer1 = make_shared<SFPlayer>(); 	
+	SFPlayer SFPlayer1(); 	
 	player = make_shared<SFAsset>(SFASSET_PLAYER, window);    
-	auto player_pos = Point2(canvas_w / 2 - player->GetBoundingBox()->GetWidth() / 2, canvas_h - 	player->GetBoundingBox()->GetHeight());
-    player->SetPosition(player_pos);
+	auto player_pos = Point2(canvas_w / 2 - player->GetBoundingBox()->GetWidth() / 2, canvas_h - player->GetBoundingBox()->GetHeight());
+	player->SetPosition(player_pos);
 	
 
 	//place the aliens
@@ -66,9 +66,9 @@ void SFApp::OnEvent(SFEvent& event) {
        		player->GoEast();
        		break;
 		case SFEVENT_FIRE:
-			if (SFPlayer1->GetCharge() >= 240) {
+			if (SFPlayer1.GetCharge() >= 120) {
 				FireProjectile();
-				SFPlayer1->ResetCharge();
+				SFPlayer1.ResetCharge();
 			}
 			break;
     }
@@ -94,7 +94,7 @@ void SFApp::OnUpdate() {
 			p->GoNorth();
 		}
     }
-	SFPlayer1->IncrementCharge();
+	SFPlayer1.IncrementCharge();
 	//player->SetPlayerSprite(SFPlayer1.GetCharge());
 	
     // coins
@@ -206,7 +206,7 @@ void SFApp::FireProjectile() {
     projectiles.push_back(bullet);
 }
 
-SFPlayer SFApp::ReturnPlayer(SFPlayer
+//SFPlayer SFApp::ReturnPlayer(SFPlayer
 /*const char* SFApp::GetPlayerSprite() {
 	if (SFPlayer1->GetCharge() <= 59) {
 		return "assets/player0.png";

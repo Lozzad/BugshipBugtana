@@ -5,13 +5,15 @@
 
 class SFPlayer {
 private:	
-	std::shared_ptr<SFPlayer> Player();	
+	SFPlayer Player();	
 	int Charge;
+	const int FULL_CHARGE = 120;
 
 public: 
 	SFPlayer();
 	~SFPlayer();
-		
+	
+	bool		CanFire();	
 	int			GetCharge();
 
 	//const char*	GetPlayerSprite();

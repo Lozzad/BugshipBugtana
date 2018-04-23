@@ -29,7 +29,7 @@ void SFPlayer::ResetCharge() {
 }
 
 void SFPlayer::IncrementCharge() {
-	if (Charge < 240) {
+	if (Charge < 120) {
 		Charge++;
 	}
 }
