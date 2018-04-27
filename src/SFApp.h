@@ -10,7 +10,6 @@ using namespace std;
 #include "SFCommon.h"
 #include "SFEvent.h"
 #include "SFAsset.h"
-#include "SFPlayer.h"
 
 /**
  * Represents the StarshipFontana application.  It has responsibilities for:
@@ -33,7 +32,8 @@ public:
 private:
     bool is_running;
 	
-	SFPlayer 				SFPlayer1;    
+	int chargelvl;
+   
 	shared_ptr<SFWindow> 	window;
 
     shared_ptr<SFAsset> 	player;

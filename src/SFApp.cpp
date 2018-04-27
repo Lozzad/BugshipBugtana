@@ -4,8 +4,7 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : is_running(true), window(window
     int canvas_w = window->GetWidth();
     int canvas_h = window->GetHeight();					//-> for pointers, . for the obj
 	
-	//place the player    
-	SFPlayer SFPlayer1(); 	
+	//place the player	
 	player = make_shared<SFAsset>(SFASSET_PLAYER, window);    
 	auto player_pos = Point2(canvas_w / 2 - player->GetBoundingBox()->GetWidth() / 2, canvas_h - player->GetBoundingBox()->GetHeight());
 	player->SetPosition(player_pos);
@@ -66,9 +65,9 @@ void SFApp::OnEvent(SFEvent& event) {
        		player->GoEast();
        		break;
 		case SFEVENT_FIRE:
-			if (SFPlayer1.GetCharge() >= 120) {
+			if (chargelvl >= 240) {
 				FireProjectile();
-				SFPlayer1.ResetCharge();
+				chargelvl = 0;
 			}
 			break;
     }
@@ -94,8 +93,10 @@ void SFApp::OnUpdate() {
 			p->GoNorth();
 		}
     }
-	SFPlayer1.IncrementCharge();
-	player->Charge(SFPlayer1.GetCharge());
+	
+	//increase weapon charge	
+	chargelvl++;
+	player->Charge(chargelvl);
 	
     // coins
     for (auto c : coins) {
