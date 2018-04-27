@@ -39,8 +39,9 @@ public:
     virtual void		GoSouth();
     virtual void      	SetNotAlive();
     virtual bool      	IsAlive();
-	virtual void      	HandleCollision();
 	virtual	void		Charge(int Charge);
+	virtual void      	HandleCollision();
+	
 
     virtual bool                      CollidesWith(shared_ptr<SFAsset>);
     virtual shared_ptr<SFBoundingBox> GetBoundingBox();

@@ -95,8 +95,8 @@ shared_ptr<SFBoundingBox> SFAsset::GetBoundingBox() {
     return bbox;
 }
 
-void SFAsset::SetNotAlive() {
-    type = SFASSET_DEAD;
+void SFAsset::SetNotAlive() {    
+	type = SFASSET_DEAD;
 }
 
 bool SFAsset::IsAlive() {
@@ -123,10 +123,13 @@ void SFAsset::HandleCollision() {
     if (SFASSET_PROJECTILE == type || SFASSET_ALIEN == type) {
         SetNotAlive();
     }
-	if (SFASSET_PROJECTILE == type || SFASSET_WALL == type) {
+	if (SFASSET_PROJECTILE == type || SFASSET_WALL == type) {		
 		SetNotAlive();
 	}
 	if (SFASSET_PLAYER == type || SFASSET_WALL == type) {
 		GoSouth();
+	}
+	if (SFASSET_PLAYER == type || SFASSET_COIN == type) {
+		SetNotAlive();
 	}
 }

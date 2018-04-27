@@ -27,7 +27,8 @@ public:
     void 	OnUpdate();
     void 	OnRender();
 
-	void		FireProjectile();
+	void	FireProjectile();
+	void	DropCoin(Point2 center);
 	
 private:
     bool is_running;

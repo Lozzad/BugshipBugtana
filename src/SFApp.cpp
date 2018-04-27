@@ -28,12 +28,6 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : is_running(true), window(window
 		wall->SetPosition(pos);
 		walls.push_back(wall);
 	}
-
-	//place the coin
-    auto coin = make_shared<SFAsset>(SFASSET_COIN, window);
-    auto pos = Point2((canvas_w / 4), 100);
-    coin->SetPosition(pos);
-    coins.push_back(coin);
 }
 
 SFApp::~SFApp() {}
@@ -118,6 +112,7 @@ void SFApp::OnUpdate() {
             if (p->CollidesWith(a)) {
                 p->HandleCollision();
                 a->HandleCollision();
+				DropCoin(a->GetCenter());
             }
 		}
 		for (auto w : walls) {
@@ -132,7 +127,11 @@ void SFApp::OnUpdate() {
 			player->HandleCollision();
 		}
 	}
-	
+	for (auto c : coins) {
+		if (c->CollidesWith(player)) {
+			c->HandleCollision();
+		}
+	}	
 
     // 3. Remove dead aliens (the long way)
     list<shared_ptr<SFAsset>> tmpA;
@@ -163,6 +162,16 @@ void SFApp::OnUpdate() {
 	}
 	projectiles.clear();
 	projectiles = list<shared_ptr<SFAsset>>(tmpP);
+
+	//and coins
+	list<shared_ptr<SFAsset>> tmpC;
+	for (auto c : coins) {
+		if (c->IsAlive()) {
+			tmpC.push_back(c);
+		}
+	}
+	coins.clear();
+	coins = list<shared_ptr<SFAsset>>(tmpC);
 }
 
 void SFApp::OnRender() {
@@ -191,8 +200,10 @@ void SFApp::OnRender() {
 	}
 
     for (auto c : coins) {
-        c->OnRender();
-    }
+        if (c->IsAlive()) {
+			c->OnRender();
+		}    
+	}
 
     // 3. Switch the off-screen buffer to be on-screen
     window->ShowScreen();
@@ -205,4 +216,12 @@ void SFApp::FireProjectile() {
     auto pos = Point2(v.getX() - bullet->GetBoundingBox()->GetWidth() / 2, v.getY());
     bullet->SetPosition(pos);
     projectiles.push_back(bullet);
+}
+
+void SFApp::DropCoin(Point2 center) {
+    auto coin = make_shared<SFAsset>(SFASSET_COIN, window);
+    auto v = center;
+	auto pos = Point2(v.getX() - coin->GetBoundingBox()->GetWidth() / 2, v.getY());
+    coin->SetPosition(pos);
+    coins.push_back(coin);
 }
