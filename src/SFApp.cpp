@@ -59,7 +59,7 @@ void SFApp::OnEvent(SFEvent& event) {
        		player->GoEast();
        		break;
 		case SFEVENT_FIRE:
-			if (chargelvl >= 240) {
+			if (chargelvl >= MAX_CHARGE) {
 				FireProjectile();
 				chargelvl = 0;
 			}
@@ -88,9 +88,9 @@ void SFApp::OnUpdate() {
 		}
     }
 	
-	//increase weapon charge	
+	//update player charge
 	chargelvl++;
-	player->Charge(chargelvl);
+	player->Charge(chargelvl, MAX_CHARGE);
 	
     // coins
     for (auto c : coins) {
@@ -120,7 +120,7 @@ void SFApp::OnUpdate() {
 				p->HandleCollision();
 				w->HandleCollision();
         	}
-		}
+		} 
     }
 	for (auto w : walls) {
 		if (w->CollidesWith(player)) {

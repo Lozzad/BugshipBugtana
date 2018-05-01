@@ -103,16 +103,16 @@ bool SFAsset::IsAlive() {
     return (SFASSET_DEAD != type);
 }
 
-void SFAsset::Charge(int Charge) {
-	if (Charge >= 240) {
+void SFAsset::Charge(int Charge, int max) {
+	if (Charge >= max) {
  		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/player4.png");
-	} else if (Charge < 240 && Charge >= 180) {
+	} else if (Charge < max && Charge >= max*0.75) {
 		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/player3.png");
-	} else if (Charge < 180 && Charge >= 120) {
+	} else if (Charge < max*0.75 && Charge >= max*0.5) {
 		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/player2.png");
-	} else if (Charge < 120 && Charge >= 60) {
+	} else if (Charge < max*0.5 && Charge >= max*0.25) {
 		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/player1.png");
-	} else if (Charge < 60 && Charge >= 0) {
+	} else if (Charge < max*0.25 && Charge >= 0) {
 		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/player0.png");
 	} else {
 		throw SFException("Couldnt Get Sprite");

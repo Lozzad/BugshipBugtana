@@ -34,15 +34,17 @@ private:
     bool is_running;
 	
 	int chargelvl;
-   
+   	const int MAX_CHARGE = 100;
+
 	shared_ptr<SFWindow> 	window;
 
     shared_ptr<SFAsset> 	player;
     
-    list<shared_ptr<SFAsset> > projectiles;
-    list<shared_ptr<SFAsset> > aliens;
-    list<shared_ptr<SFAsset> > coins;
-	list<shared_ptr<SFAsset> > walls;
+    list<shared_ptr<SFAsset> > 	projectiles;
+    list<shared_ptr<SFAsset> > 	aliens;
+    list<shared_ptr<SFAsset> > 	coins;
+	list<shared_ptr<SFAsset> > 	walls;
+	list<int>					wallHealth;
 };
 
 #endif
