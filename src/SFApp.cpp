@@ -1,10 +1,10 @@
 #include "SFApp.h"
 
-SFApp::SFApp(std::shared_ptr<SFWindow> window) : is_running(true), window(window) {
+SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxCharge(100), playerNorth(false), playerSouth(false), playerWest(false), playerEast(false), is_running(true), window(window) {
     int canvas_w = window->GetWidth();
     int canvas_h = window->GetHeight();					//-> for pointers, . for the obj
 	
-	//place the player	
+	//place the player		
 	player = make_shared<SFAsset>(SFASSET_PLAYER, window);    
 	auto player_pos = Point2(canvas_w / 2 - player->GetBoundingBox()->GetWidth() / 2, canvas_h - player->GetBoundingBox()->GetHeight());
 	player->SetPosition(player_pos);
@@ -21,7 +21,7 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : is_running(true), window(window
     }
 
 	//place the walls
-	const int number_of_walls = 10;
+	const int number_of_walls = 13;
 	for (int i = 0; i < number_of_walls; i++) {
 		auto wall = make_shared<SFAsset>(SFASSET_WALL, window);
 		auto pos = Point2((canvas_w / number_of_walls) * i + wall->GetBoundingBox()->GetWidth() / 2, 200.0f);
@@ -46,20 +46,32 @@ void SFApp::OnEvent(SFEvent& event) {
        		OnUpdate();
        		OnRender();
        		break;
-		case SFEVENT_PLAYER_UP:
-			player->GoNorth();
+		case SFEVENT_PLAYER_UP_PRESSED:
+			playerNorth = true;
 			break;
-		case SFEVENT_PLAYER_DOWN:
-			player->GoSouth();
+		case SFEVENT_PLAYER_DOWN_PRESSED:
+			playerSouth = true;
 			break;
-		case SFEVENT_PLAYER_LEFT:
-       		player->GoWest();
+		case SFEVENT_PLAYER_LEFT_PRESSED:
+       		playerWest = true;
        		break;
-		case SFEVENT_PLAYER_RIGHT:
-       		player->GoEast();
+		case SFEVENT_PLAYER_RIGHT_PRESSED:
+       		playerEast = true;
+       		break;
+		case SFEVENT_PLAYER_UP_RELEASED:
+			playerNorth = false;
+			break;
+		case SFEVENT_PLAYER_DOWN_RELEASED:
+			playerSouth = false;
+			break;
+		case SFEVENT_PLAYER_LEFT_RELEASED:
+       		playerWest = false;
+       		break;
+		case SFEVENT_PLAYER_RIGHT_RELEASED:
+       		playerEast = false;
        		break;
 		case SFEVENT_FIRE:
-			if (chargelvl >= MAX_CHARGE) {
+			if (chargelvl >= maxCharge) {
 				FireProjectile();
 				chargelvl = 0;
 			}
@@ -80,18 +92,23 @@ void SFApp::StartMainLoop() {
 }
 
 void SFApp::OnUpdate() {
-    
+	//player movement
+	if (playerNorth) { player->GoNorth(); }
+	if (playerSouth) { player->GoSouth(); }
+	if (playerWest)  { player->GoWest(); }
+	if (playerEast)  { player->GoEast(); }	    
+	
+	//update player charge
+	chargelvl++;
+	player->Charge(chargelvl, maxCharge);
+
     // 1. Move / update game objects
     for (auto p : projectiles) {
         if (p->IsAlive()) {
 			p->GoNorth();
 		}
     }
-	
-	//update player charge
-	chargelvl++;
-	player->Charge(chargelvl, MAX_CHARGE);
-	
+
     // coins
     for (auto c : coins) {
         c->GoSouth();
@@ -130,6 +147,8 @@ void SFApp::OnUpdate() {
 	for (auto c : coins) {
 		if (c->CollidesWith(player)) {
 			c->HandleCollision();
+			numCoins++;
+			std::cout << "Coins Collected" << numCoins << std::endl;
 		}
 	}	
 

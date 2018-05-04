@@ -31,10 +31,10 @@ public:
 	void	DropCoin(Point2 center);
 	
 private:
-    bool is_running;
-	
-	int chargelvl;
-   	const int MAX_CHARGE = 100;
+    bool is_running, playerNorth, playerSouth, playerEast, playerWest;
+		
+
+	int chargelvl, numCoins, maxCharge;
 
 	shared_ptr<SFWindow> 	window;
 
