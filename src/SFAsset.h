@@ -37,7 +37,6 @@ public:
     virtual void      	GoWest();
     virtual void      	GoNorth();
     virtual void		GoSouth();
-	virtual void		Shot();
     virtual void      	SetNotAlive();
     virtual bool      	IsAlive();
 	virtual	void		Charge(int Charge, int max);
