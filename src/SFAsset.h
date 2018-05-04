@@ -37,6 +37,7 @@ public:
     virtual void      	GoWest();
     virtual void      	GoNorth();
     virtual void		GoSouth();
+	virtual void		Shot();
     virtual void      	SetNotAlive();
     virtual bool      	IsAlive();
 	virtual	void		Charge(int Charge, int max);
@@ -47,6 +48,7 @@ public:
     virtual shared_ptr<SFBoundingBox> GetBoundingBox();
     
 private:   
+	const float					SPEED = 2.0f;	
 	shared_ptr<SFPlayer>		SFPlayer1;	
 	SDL_Texture             *	sprite;
     shared_ptr<SFBoundingBox>   bbox;

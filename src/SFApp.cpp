@@ -105,7 +105,7 @@ void SFApp::OnUpdate() {
     // 1. Move / update game objects
     for (auto p : projectiles) {
         if (p->IsAlive()) {
-			p->GoNorth();
+			p->Shot();
 		}
     }
 

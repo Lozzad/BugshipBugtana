@@ -68,22 +68,28 @@ void SFAsset::OnRender() {
 }
 
 void SFAsset::GoWest() {
-    Vector2 v = Vector2(-5.0f, 0);
+    Vector2 v = Vector2(-SPEED, 0);
     bbox->Translate(v);
 }
 
 void SFAsset::GoEast() {
-    Vector2 v = Vector2(5.0f, 0);
+    Vector2 v = Vector2(SPEED, 0);
     bbox->Translate(v);
 }
 
 void SFAsset::GoNorth() {
-    Vector2 v = Vector2(0.0f, -5.0f);
+    Vector2 v = Vector2(0.0f, -SPEED);
     bbox->Translate(v);
 }
 
 void SFAsset::GoSouth() {
-	Vector2 v = Vector2(0.0f, 5.0f);
+	Vector2 v = Vector2(0.0f, SPEED);
+	bbox->Translate(v);
+}
+
+//move projectiles faster than player
+void SFAsset::Shot() {
+	Vector2 v = Vector2(0.0f, -5.0f);
 	bbox->Translate(v);
 }
 
