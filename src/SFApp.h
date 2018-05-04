@@ -39,14 +39,15 @@ private:
 	shared_ptr<SFWindow> 	window;
 
     shared_ptr<SFAsset> 	player;
+	shared_ptr<SFAsset>		door;
     
     list<shared_ptr<SFAsset> > 	projectiles;
     list<shared_ptr<SFAsset> > 	aliens;
     list<shared_ptr<SFAsset> > 	coins;
 	list<shared_ptr<SFAsset> > 	walls;
-	list<int>					wallHealth;
 
 	Mix_Music *bgMusic = NULL;
+	Mix_Chunk *mothLaser = NULL;
 };
 
 #endif

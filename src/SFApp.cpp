@@ -4,16 +4,26 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxC
     int canvas_w = window->GetWidth();
     int canvas_h = window->GetHeight();					//-> for pointers, . for the obj		
 	
-	//load music
+	//load sounds
 	bgMusic = Mix_LoadMUS( "assets/bgMusic.wav" );
 	if (bgMusic == NULL) {
 		throw SFException ( "Failed to initialise music" );
 	}
+	mothLaser = Mix_LoadWAV( "assets/mothLaser.wav" );
+	if (mothLaser == NULL) {
+		throw SFException ( "Failed to load moth laser noise" );
+	}
+
+
 	//place the player		
 	player = make_shared<SFAsset>(SFASSET_PLAYER, window);    
 	auto player_pos = Point2(canvas_w / 2 - player->GetBoundingBox()->GetWidth() / 2, canvas_h - player->GetBoundingBox()->GetHeight());
 	player->SetPosition(player_pos);
 	
+	//place the exit
+	door = make_shared<SFAsset>(SFASSET_DOOR, window);
+	auto door_pos = Point2(canvas_w / 2 - door->GetBoundingBox()->GetWidth() / 2, door->GetBoundingBox()->GetHeight());
+	door->SetPosition(door_pos);
 
 	//place the aliens
     const int number_of_aliens = 10; 
@@ -26,13 +36,17 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxC
     }
 
 	//place the walls
-	const int number_of_walls = 13;
-	for (int i = 0; i < number_of_walls; i++) {
-		auto wall = make_shared<SFAsset>(SFASSET_WALL, window);
-		auto pos = Point2((canvas_w / number_of_walls) * i + wall->GetBoundingBox()->GetWidth() / 2, 200.0f);
-		wall->SetPosition(pos);
-		walls.push_back(wall);
+	const int depth_of_walls = 5;	
+	const int number_of_walls = 15;
+	for (int j = 0; j < depth_of_walls; j++) {	
+		for (int i = 0; i < number_of_walls; i++) {
+			auto wall = make_shared<SFAsset>(SFASSET_WALL, window);
+			auto pos = Point2((canvas_w / number_of_walls) * i + wall->GetBoundingBox()->GetWidth() / 2, 200.0f+j*wall->GetBoundingBox()->GetHeight());
+			wall->SetPosition(pos);
+			walls.push_back(wall);
+		}
 	}
+
 }
 
 SFApp::~SFApp() {}
@@ -77,8 +91,9 @@ void SFApp::OnEvent(SFEvent& event) {
        		break;
 		case SFEVENT_FIRE:
 			if (chargelvl >= maxCharge) {
-				FireProjectile();
 				chargelvl = 0;
+				FireProjectile();
+				Mix_PlayChannel(-1, mothLaser, 0);
 			}
 			break;
     }
@@ -209,7 +224,7 @@ void SFApp::OnRender() {
 
     // 2. Draw game objects off-screen
     player->OnRender();
-
+	door->OnRender();
     for (auto p : projectiles) {
         if (p->IsAlive()) { 
             p->OnRender(); 
