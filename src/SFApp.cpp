@@ -151,14 +151,14 @@ void SFApp::OnUpdate() {
     }
 	for (auto w : walls) {
 		if (w->CollidesWith(player)) {
-			player->HandleCollision();
+			player->HitWall( playerNorth, playerSouth, playerEast, playerWest);
 		}
 	}
 	for (auto c : coins) {
 		if (c->CollidesWith(player)) {
 			c->HandleCollision();
 			numCoins++;
-			std::cout << "Coins Collected" << numCoins << std::endl;
+			std::cout << "Gold Collected" << numCoins << std::endl;
 		}
 	}	
 

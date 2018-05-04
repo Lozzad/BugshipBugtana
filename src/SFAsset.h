@@ -42,13 +42,15 @@ public:
     virtual bool      	IsAlive();
 	virtual	void		Charge(int Charge, int max);
 	virtual void      	HandleCollision();
+
+	virtual void 		HitWall( bool north, bool south, bool east, bool west);
 	
 
     virtual bool                      CollidesWith(shared_ptr<SFAsset>);
     virtual shared_ptr<SFBoundingBox> GetBoundingBox();
     
 private:   
-	const float					SPEED = 2.0f;	
+	const float					SPEED = 4.0f;	
 	shared_ptr<SFPlayer>		SFPlayer1;	
 	SDL_Texture             *	sprite;
     shared_ptr<SFBoundingBox>   bbox;

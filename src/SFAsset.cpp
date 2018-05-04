@@ -70,9 +70,9 @@ void SFAsset::OnRender() {
 void SFAsset::GoWest() {
 	Vector2 v = Vector2(0.0f, 0.0f);	
 	if (SFASSET_PLAYER == type) {    
-		v = Vector2(-SPEED, 0);
+		v = Vector2(-(SPEED/2), 0);
 	} else {    
-		v = Vector2(-5.0f, 0);
+		v = Vector2(-SPEED, 0);
 	}	
 	bbox->Translate(v);
 }
@@ -80,9 +80,9 @@ void SFAsset::GoWest() {
 void SFAsset::GoEast() {
 	Vector2 v = Vector2(0.0f, 0.0f);	
 	if (SFASSET_PLAYER == type) {    
-		v = Vector2(SPEED, 0);
+		v = Vector2((SPEED/2), 0);
 	} else {
-		v = Vector2(5.0f, 0);
+		v = Vector2(SPEED, 0);
 	}
     bbox->Translate(v);
 }
@@ -90,9 +90,9 @@ void SFAsset::GoEast() {
 void SFAsset::GoNorth() {
 	Vector2 v = Vector2(0.0f, 0.0f);
 	if (SFASSET_PLAYER == type) {    
-		v = Vector2(0.0f, -SPEED);
+		v = Vector2(0.0f, -(SPEED/2));
 	} else {
-	    v = Vector2(0.0f, -5.0f);
+	    v = Vector2(0.0f, -SPEED);
 	}
 	bbox->Translate(v);
 }
@@ -100,9 +100,9 @@ void SFAsset::GoNorth() {
 void SFAsset::GoSouth() {
 	Vector2 v = Vector2(0.0f, 0.0f);	
 	if (SFASSET_PLAYER == type) { 
-		v = Vector2(0.0f, SPEED);
+		v = Vector2(0.0f, (SPEED/2));
 	} else {
-		v = Vector2(0.0f, 5.0f);
+		v = Vector2(0.0f, SPEED);
 	}
 	bbox->Translate(v);
 }
@@ -152,4 +152,11 @@ void SFAsset::HandleCollision() {
 	if (SFASSET_PLAYER == type || SFASSET_COIN == type) {
 		SetNotAlive();
 	}
+}
+
+void SFAsset::HitWall( bool north, bool south, bool east, bool west) {
+	if (north) { GoSouth(); }
+	if (south) { GoNorth(); }
+	if (east)  { GoWest(); }
+	if (west)  { GoEast(); }
 }
