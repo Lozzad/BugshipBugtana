@@ -2,8 +2,13 @@
 
 SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxCharge(100), playerNorth(false), playerSouth(false), playerWest(false), playerEast(false), is_running(true), window(window) {
     int canvas_w = window->GetWidth();
-    int canvas_h = window->GetHeight();					//-> for pointers, . for the obj
+    int canvas_h = window->GetHeight();					//-> for pointers, . for the obj		
 	
+	//load music
+	bgMusic = Mix_LoadMUS( "assets/bgMusic.wav" );
+	if (bgMusic == NULL) {
+		throw SFException ( "Failed to initialise music" );
+	}
 	//place the player		
 	player = make_shared<SFAsset>(SFASSET_PLAYER, window);    
 	auto player_pos = Point2(canvas_w / 2 - player->GetBoundingBox()->GetWidth() / 2, canvas_h - player->GetBoundingBox()->GetHeight());
@@ -98,6 +103,11 @@ void SFApp::OnUpdate() {
 	if (playerWest)  { player->GoWest(); }
 	if (playerEast)  { player->GoEast(); }	    
 	
+	//play music if no music
+	if ( Mix_PlayingMusic() == 0 ) {
+		Mix_PlayMusic( bgMusic, -1);
+	}
+
 	//update player charge
 	chargelvl++;
 	player->Charge(chargelvl, maxCharge);

@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <memory>
+#include <SDL_mixer.h>
 
 using namespace std;
 
@@ -29,6 +30,11 @@ shared_ptr<SFWindow> InitGraphics() {
         throw SFException("Failed to initialise SDL");
     }
 
+	//initialise SDL audio mixer
+	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 ) {
+		throw SFException("Failed to initialise mixer");
+	}
+
     Uint32 width = 640;
     Uint32 height = 480;
     
@@ -43,7 +49,7 @@ int main(int arc, char ** argv) {
     try {
         // Initialise graphics context
         shared_ptr<SFWindow> window = InitGraphics();
-        
+
         // Initialise world
         shared_ptr<SFApp> game = make_shared<SFApp>(window);
 

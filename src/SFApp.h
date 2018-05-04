@@ -22,7 +22,7 @@ public:
     SFApp(std::shared_ptr<SFWindow>);
     ~SFApp();
     
-    void 	OnEvent(SFEvent &);
+	void 	OnEvent(SFEvent &);
     void 	StartMainLoop();
     void 	OnUpdate();
     void 	OnRender();
@@ -45,6 +45,8 @@ private:
     list<shared_ptr<SFAsset> > 	coins;
 	list<shared_ptr<SFAsset> > 	walls;
 	list<int>					wallHealth;
+
+	Mix_Music *bgMusic = NULL;
 };
 
 #endif
