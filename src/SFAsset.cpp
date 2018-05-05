@@ -20,6 +20,9 @@ SFAsset::SFAsset(SFASSETTYPE type, std::shared_ptr<SFWindow> window) : type(type
 	case SFASSET_DOOR:
 		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/door.png");
 		break;
+	case SFASSET_BUILDER:
+		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/builder.png");
+		break;
     }
 
     if (!sprite) {

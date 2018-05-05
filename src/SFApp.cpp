@@ -25,7 +25,7 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxC
 	auto door_pos = Point2(canvas_w / 2 - door->GetBoundingBox()->GetWidth() / 2, door->GetBoundingBox()->GetHeight());
 	door->SetPosition(door_pos);
 
-	//place the aliens
+	//place the enemies
     const int number_of_aliens = 10; 
 	for (int i = 0; i < number_of_aliens; i++) {
         // place an alien at width/number_of_aliens * i
@@ -35,8 +35,13 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxC
         aliens.push_back(alien);
     }
 
+	//place the builder
+	builder = make_shared<SFAsset>(SFASSET_BUILDER, window);
+	auto builder_pos = Point2(canvas_w / 2 - builder->GetBoundingBox()->GetWidth() / 2, 200.0f - builder->GetBoundingBox()->GetHeight());
+	builder->SetPosition(builder_pos);
+
 	//place the walls
-	const int depth_of_walls = 5;	
+	const int depth_of_walls = 3;	
 	const int number_of_walls = 15;
 	for (int j = 0; j < depth_of_walls; j++) {	
 		for (int i = 0; i < number_of_walls; i++) {
@@ -113,10 +118,11 @@ void SFApp::StartMainLoop() {
 
 void SFApp::OnUpdate() {
 	//player movement
-	if (playerNorth) { player->GoNorth(); }
-	if (playerSouth) { player->GoSouth(); }
-	if (playerWest)  { player->GoWest(); }
-	if (playerEast)  { player->GoEast(); }	    
+	//if the player wants to move and isnt at the edge
+	if (playerNorth && player->GetBoundingBox()->GetY() >= 0) { player->GoNorth(); }
+	if (playerSouth && player->GetBoundingBox()->GetY() <= window->GetHeight() - player->GetBoundingBox()->GetHeight()) { player->GoSouth(); }
+	if (playerWest && player->GetBoundingBox()->GetX() >= 0)  { player->GoWest(); }
+	if (playerEast && player->GetBoundingBox()->GetX() <= window->GetWidth() - player->GetBoundingBox()->GetWidth())  { player->GoEast(); }	    
 	
 	//play music if no music
 	if ( Mix_PlayingMusic() == 0 ) {
@@ -133,6 +139,11 @@ void SFApp::OnUpdate() {
 			p->GoNorth();
 		}
     }
+	
+	if (numCoins >= 5) {
+		numCoins = 0;
+		IncreaseShotSpeed();
+	}
 
     // coins
     for (auto c : coins) {
@@ -154,13 +165,15 @@ void SFApp::OnUpdate() {
             if (p->CollidesWith(a)) {
                 p->HandleCollision();
                 a->HandleCollision();
-				DropCoin(a->GetCenter());
             }
 		}
 		for (auto w : walls) {
 			if (p->CollidesWith(w)) {
 				p->HandleCollision();
 				w->HandleCollision();
+				if (RandomNumber(6) >= 4) {
+					DropCoin(w->GetCenter());
+				}				
         	}
 		} 
     }
@@ -225,6 +238,8 @@ void SFApp::OnRender() {
     // 2. Draw game objects off-screen
     player->OnRender();
 	door->OnRender();
+	builder->OnRender();
+
     for (auto p : projectiles) {
         if (p->IsAlive()) { 
             p->OnRender(); 
@@ -268,4 +283,16 @@ void SFApp::DropCoin(Point2 center) {
 	auto pos = Point2(v.getX() - coin->GetBoundingBox()->GetWidth() / 2, v.getY());
     coin->SetPosition(pos);
     coins.push_back(coin);
+}
+
+int SFApp::RandomNumber( int scope ) {
+	int number = rand() % (scope);
+	return number;
+}
+
+void SFApp::IncreaseShotSpeed() {
+	if (maxCharge >= 50) {
+		maxCharge *= 0.8;
+		std::cout << "Max Charge: " << maxCharge << std::endl;
+	}
 }
