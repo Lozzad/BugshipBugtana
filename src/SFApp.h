@@ -18,6 +18,8 @@ using namespace std;
  * 2. Update game world
  * 3. Render game world
  */
+enum BUILDER_STATES {	BUILDER_LEFT, BUILDER_RIGHT, BUILDING };
+
 class SFApp {
 public:
     SFApp(std::shared_ptr<SFWindow>);
@@ -32,12 +34,12 @@ public:
 	void	DropCoin(Point2 center);
 	int		RandomNumber(int scope);
 	void	IncreaseShotSpeed();
+	void	RepairWall(Point2 center);
 	
 private:
     bool is_running, playerNorth, playerSouth, playerEast, playerWest;
-		
 
-	int chargelvl, numCoins, maxCharge;
+	int chargelvl, numCoins, maxCharge, builderState, buildCharge;
 
 	shared_ptr<SFWindow> 	window;
 

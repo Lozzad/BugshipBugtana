@@ -8,6 +8,9 @@ SFAsset::SFAsset(SFASSETTYPE type, std::shared_ptr<SFWindow> window) : type(type
     case SFASSET_PROJECTILE:
         sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/projectile.png");
         break;
+	case SFASSET_WEBBING:
+		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/webbing.png");
+		break;
     case SFASSET_ALIEN:
         sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/alien.png");
         break;
@@ -16,6 +19,9 @@ SFAsset::SFAsset(SFASSETTYPE type, std::shared_ptr<SFWindow> window) : type(type
         break;
 	case SFASSET_WALL:
 		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/wall.png");
+		break;
+	case SFASSET_DAM_WALL:
+		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/damWall.png");
 		break;
 	case SFASSET_DOOR:
 		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/door.png");
@@ -75,7 +81,7 @@ void SFAsset::OnRender() {
 
 void SFAsset::GoWest() {
 	Vector2 v = Vector2(0.0f, 0.0f);	
-	if (SFASSET_PLAYER == type) {    
+	if (SFASSET_PROJECTILE != type) {    
 		v = Vector2(-(SPEED/2), 0);
 	} else {    
 		v = Vector2(-SPEED, 0);
@@ -85,7 +91,7 @@ void SFAsset::GoWest() {
 
 void SFAsset::GoEast() {
 	Vector2 v = Vector2(0.0f, 0.0f);	
-	if (SFASSET_PLAYER == type) {    
+	if (SFASSET_PROJECTILE != type) {    
 		v = Vector2((SPEED/2), 0);
 	} else {
 		v = Vector2(SPEED, 0);
@@ -95,7 +101,7 @@ void SFAsset::GoEast() {
 
 void SFAsset::GoNorth() {
 	Vector2 v = Vector2(0.0f, 0.0f);
-	if (SFASSET_PLAYER == type) {    
+	if (SFASSET_PROJECTILE != type) {    
 		v = Vector2(0.0f, -(SPEED/2));
 	} else {
 	    v = Vector2(0.0f, -SPEED);
@@ -105,7 +111,7 @@ void SFAsset::GoNorth() {
 
 void SFAsset::GoSouth() {
 	Vector2 v = Vector2(0.0f, 0.0f);	
-	if (SFASSET_PLAYER == type) { 
+	if (SFASSET_PROJECTILE != type) { 
 		v = Vector2(0.0f, (SPEED/2));
 	} else {
 		v = Vector2(0.0f, SPEED);
@@ -128,6 +134,21 @@ void SFAsset::SetNotAlive() {
 bool SFAsset::IsAlive() {
     return (SFASSET_DEAD != type);
 }
+
+void SFAsset::DamageWall() {
+	if (type == SFASSET_WALL) {
+		type = SFASSET_DAM_WALL;
+		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/damWall.png");
+	} else if (type == SFASSET_DAM_WALL) {
+		type = SFASSET_DEAD;
+		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/wall.png");
+	}
+}
+
+bool SFAsset::IsDamaged() {
+	return (type == SFASSET_DAM_WALL);
+}
+
 
 void SFAsset::Charge(int Charge, int max) {
 	if (Charge >= max) {

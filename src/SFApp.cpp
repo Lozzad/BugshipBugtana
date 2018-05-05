@@ -1,6 +1,6 @@
 #include "SFApp.h"
 
-SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxCharge(100), playerNorth(false), playerSouth(false), playerWest(false), playerEast(false), is_running(true), window(window) {
+SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxCharge(100), builderState(BUILDER_LEFT), buildCharge(0), playerNorth(false), playerSouth(false), playerWest(false), playerEast(false), is_running(true), window(window) {
     int canvas_w = window->GetWidth();
     int canvas_h = window->GetHeight();					//-> for pointers, . for the obj		
 	
@@ -37,7 +37,7 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxC
 
 	//place the builder
 	builder = make_shared<SFAsset>(SFASSET_BUILDER, window);
-	auto builder_pos = Point2(canvas_w / 2 - builder->GetBoundingBox()->GetWidth() / 2, 200.0f - builder->GetBoundingBox()->GetHeight());
+	auto builder_pos = Point2(canvas_w / 2 - builder->GetBoundingBox()->GetWidth() / 2, 170.0f);
 	builder->SetPosition(builder_pos);
 
 	//place the walls
@@ -118,7 +118,7 @@ void SFApp::StartMainLoop() {
 
 void SFApp::OnUpdate() {
 	//player movement
-	//if the player wants to move and isnt at the edge
+	//"if the player wants to move and isnt at the edge then.." 
 	if (playerNorth && player->GetBoundingBox()->GetY() >= 0) { player->GoNorth(); }
 	if (playerSouth && player->GetBoundingBox()->GetY() <= window->GetHeight() - player->GetBoundingBox()->GetHeight()) { player->GoSouth(); }
 	if (playerWest && player->GetBoundingBox()->GetX() >= 0)  { player->GoWest(); }
@@ -139,7 +139,37 @@ void SFApp::OnUpdate() {
 			p->GoNorth();
 		}
     }
+	//builder 'AI'
 	
+
+	switch (builderState) {
+		case BUILDER_LEFT:
+			builder->GoWest();
+			if (builder->GetBoundingBox()->GetX() <= 0) {
+				builderState = BUILDER_RIGHT;
+			}
+			break;
+		case BUILDER_RIGHT:
+			builder->GoEast();
+			if (builder->GetBoundingBox()->GetX() >= window->GetWidth() - builder->GetBoundingBox()->GetWidth()) {
+				builderState = BUILDER_LEFT;
+			}
+			break;
+		case BUILDING:
+			buildCharge++;			
+			if (buildCharge >= 50) {
+				RepairWall(builder->GetCenter());
+				buildCharge = 0;
+			}
+			if (RandomNumber(3) > 2) {
+				builderState = BUILDER_LEFT;
+			} else {
+				builderState = BUILDER_RIGHT;
+			}
+			break;
+	}
+
+
 	if (numCoins >= 5) {
 		numCoins = 0;
 		IncreaseShotSpeed();
@@ -148,8 +178,12 @@ void SFApp::OnUpdate() {
     // coins
     for (auto c : coins) {
         c->GoSouth();
+		if (c->GetBoundingBox()->GetY() >= window->GetHeight()) {
+			c->SetNotAlive();
+		}
     }
-
+	
+	
     // enemies
     for (auto a : aliens) {
         // do something here
@@ -170,18 +204,25 @@ void SFApp::OnUpdate() {
 		for (auto w : walls) {
 			if (p->CollidesWith(w)) {
 				p->HandleCollision();
-				w->HandleCollision();
-				if (RandomNumber(6) >= 4) {
+				if (w->IsDamaged() && RandomNumber(6) >= 3) {
 					DropCoin(w->GetCenter());
-				}				
+				}
+				w->DamageWall();
         	}
 		} 
     }
+
 	for (auto w : walls) {
 		if (w->CollidesWith(player)) {
 			player->HitWall( playerNorth, playerSouth, playerEast, playerWest);
 		}
+		if (w->CollidesWith(builder) && w->IsDamaged()) {
+			auto pos = Point2(w->GetBoundingBox()->GetX(), builder->GetBoundingBox()->GetY());			
+			builder->SetPosition(pos);			
+			builderState = BUILDING;
+		}
 	}
+
 	for (auto c : coins) {
 		if (c->CollidesWith(player)) {
 			c->HandleCollision();
@@ -279,9 +320,7 @@ void SFApp::FireProjectile() {
 
 void SFApp::DropCoin(Point2 center) {
     auto coin = make_shared<SFAsset>(SFASSET_COIN, window);
-    auto v = center;
-	auto pos = Point2(v.getX() - coin->GetBoundingBox()->GetWidth() / 2, v.getY());
-    coin->SetPosition(pos);
+    coin->SetPosition(center);
     coins.push_back(coin);
 }
 
@@ -295,4 +334,9 @@ void SFApp::IncreaseShotSpeed() {
 		maxCharge *= 0.8;
 		std::cout << "Max Charge: " << maxCharge << std::endl;
 	}
+}
+
+void SFApp::RepairWall(Point2 center) {
+	auto webbing = make_shared<SFAsset>(SFASSET_WEBBING, window);
+	//TODO
 }
