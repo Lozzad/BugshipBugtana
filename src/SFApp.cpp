@@ -181,6 +181,8 @@ void SFApp::OnUpdate() {
 			}
 				
 	}
+	auto builderPos = builder->GetPosition();	
+	builderBody->SetPosition(builderPos);
 	//queen 'AI'
 	if (queen->IsAlive()) {
 		auto playerPos = player->GetCenter();
