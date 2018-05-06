@@ -4,7 +4,7 @@
 #include <memory>   // Pull in std::shared_ptr
 #include <list>     // Pull in list
 #include <string>
-#include <ctime>	//for rand
+//#include <ctime>	//for rand (seemingly not needed?)
 
 using namespace std;
 
@@ -34,7 +34,8 @@ public:
 	void	DropCoin(Point2 center);
 	int		RandomNumber(int scope);
 	void	IncreaseShotSpeed();
-	void	RepairWall(Point2 center);
+	void	RepairWall();
+	void	QueenFire();
 	
 private:
     bool is_running, playerNorth, playerSouth, playerEast, playerWest;
@@ -46,8 +47,10 @@ private:
     shared_ptr<SFAsset> 	player;
 	shared_ptr<SFAsset>		door;
 	shared_ptr<SFAsset>		builder;
+	shared_ptr<SFAsset>		queen;
     
     list<shared_ptr<SFAsset> > 	projectiles;
+	list<shared_ptr<SFAsset> > 	webs;
     list<shared_ptr<SFAsset> > 	aliens;
     list<shared_ptr<SFAsset> > 	coins;
 	list<shared_ptr<SFAsset> > 	walls;

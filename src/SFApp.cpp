@@ -25,6 +25,11 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxC
 	auto door_pos = Point2(canvas_w / 2 - door->GetBoundingBox()->GetWidth() / 2, door->GetBoundingBox()->GetHeight());
 	door->SetPosition(door_pos);
 
+	//place the queen
+	queen = make_shared<SFAsset>(SFASSET_QUEEN, window);
+	auto queen_pos = Point2(canvas_w / 2 - queen->GetBoundingBox()->GetWidth() / 2, 2*queen->GetBoundingBox()->GetHeight());
+	queen->SetPosition(queen_pos);
+	
 	//place the enemies
     const int number_of_aliens = 10; 
 	for (int i = 0; i < number_of_aliens; i++) {
@@ -117,6 +122,7 @@ void SFApp::StartMainLoop() {
 }
 
 void SFApp::OnUpdate() {
+	
 	//player movement
 	//"if the player wants to move and isnt at the edge then.." 
 	if (playerNorth && player->GetBoundingBox()->GetY() >= 0) { player->GoNorth(); }
@@ -139,9 +145,12 @@ void SFApp::OnUpdate() {
 			p->GoNorth();
 		}
     }
+	for (auto wb : webs) {
+		if (wb->IsAlive()) {
+			wb->GoSouth();
+		}
+	}
 	//builder 'AI'
-	
-
 	switch (builderState) {
 		case BUILDER_LEFT:
 			builder->GoWest();
@@ -158,15 +167,24 @@ void SFApp::OnUpdate() {
 		case BUILDING:
 			buildCharge++;			
 			if (buildCharge >= 50) {
-				RepairWall(builder->GetCenter());
+				RepairWall();
 				buildCharge = 0;
 			}
-			if (RandomNumber(3) > 2) {
-				builderState = BUILDER_LEFT;
-			} else {
+			if (player->GetBoundingBox()->GetX() >= builder->GetBoundingBox()->GetX()) {
 				builderState = BUILDER_RIGHT;
+			} else {
+				builderState = BUILDER_LEFT;
 			}
 			break;
+	}
+	//queen 'AI'
+	auto playerPos = player->GetCenter();	
+	if (playerPos.getX() >= queen->GetCenter().getX()+10) {
+		queen->GoEast();
+	} else if (playerPos.getX() <= queen->GetCenter().getX()-10) {
+		queen->GoWest();
+	} else {
+		QueenFire();
 	}
 
 
@@ -222,6 +240,15 @@ void SFApp::OnUpdate() {
 			builderState = BUILDING;
 		}
 	}
+	
+	for (auto wb : webs) {
+		for (auto w : walls) {
+			if (wb->CollidesWith(w) && w->IsDamaged()) {
+				w->RepairWall();
+				wb->SetNotAlive();
+			}
+		}
+	}
 
 	for (auto c : coins) {
 		if (c->CollidesWith(player)) {
@@ -270,6 +297,16 @@ void SFApp::OnUpdate() {
 	}
 	coins.clear();
 	coins = list<shared_ptr<SFAsset>>(tmpC);
+
+	//and webs
+	list<shared_ptr<SFAsset>> tmpWb;
+	for (auto wb : webs) {
+		if (wb->IsAlive()) {
+			tmpWb.push_back(wb);
+		}
+	}
+	webs.clear();
+	webs = list<shared_ptr<SFAsset>>(tmpWb);
 }
 
 void SFApp::OnRender() {
@@ -280,6 +317,7 @@ void SFApp::OnRender() {
     player->OnRender();
 	door->OnRender();
 	builder->OnRender();
+	queen->OnRender();
 
     for (auto p : projectiles) {
         if (p->IsAlive()) { 
@@ -303,6 +341,12 @@ void SFApp::OnRender() {
         if (c->IsAlive()) {
 			c->OnRender();
 		}    
+	}
+	
+	for (auto wb : webs) {
+		if (wb->IsAlive()) {
+			wb->OnRender();
+		}
 	}
 
     // 3. Switch the off-screen buffer to be on-screen
@@ -336,7 +380,12 @@ void SFApp::IncreaseShotSpeed() {
 	}
 }
 
-void SFApp::RepairWall(Point2 center) {
+void SFApp::RepairWall() {
+	auto pos = Point2(builder->GetBoundingBox()->GetX(), builder->GetBoundingBox()->GetY());	
 	auto webbing = make_shared<SFAsset>(SFASSET_WEBBING, window);
-	//TODO
+	webbing->SetPosition(pos);
+	webs.push_back(webbing);
+}
+
+void SFApp::QueenFire() {
 }

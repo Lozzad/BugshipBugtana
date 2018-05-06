@@ -29,6 +29,9 @@ SFAsset::SFAsset(SFASSETTYPE type, std::shared_ptr<SFWindow> window) : type(type
 	case SFASSET_BUILDER:
 		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/builder.png");
 		break;
+	case SFASSET_QUEEN:
+		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/queen.png");
+		break;
     }
 
     if (!sprite) {
@@ -81,40 +84,40 @@ void SFAsset::OnRender() {
 
 void SFAsset::GoWest() {
 	Vector2 v = Vector2(0.0f, 0.0f);	
-	if (SFASSET_PROJECTILE != type) {    
-		v = Vector2(-(SPEED/2), 0);
+	if (SFASSET_PROJECTILE == type) {    
+		v = Vector2(-SPEED, 0);		
 	} else {    
-		v = Vector2(-SPEED, 0);
+		v = Vector2(-(SPEED/2), 0);
 	}	
 	bbox->Translate(v);
 }
 
 void SFAsset::GoEast() {
 	Vector2 v = Vector2(0.0f, 0.0f);	
-	if (SFASSET_PROJECTILE != type) {    
-		v = Vector2((SPEED/2), 0);
-	} else {
+	if (SFASSET_PROJECTILE == type) {    
 		v = Vector2(SPEED, 0);
+	} else {
+		v = Vector2((SPEED/2), 0);		
 	}
     bbox->Translate(v);
 }
 
 void SFAsset::GoNorth() {
 	Vector2 v = Vector2(0.0f, 0.0f);
-	if (SFASSET_PROJECTILE != type) {    
-		v = Vector2(0.0f, -(SPEED/2));
+	if (SFASSET_PROJECTILE == type) {    
+		v = Vector2(0.0f, -SPEED);
 	} else {
-	    v = Vector2(0.0f, -SPEED);
+		v = Vector2(0.0f, -(SPEED/2));	    
 	}
 	bbox->Translate(v);
 }
 
 void SFAsset::GoSouth() {
 	Vector2 v = Vector2(0.0f, 0.0f);	
-	if (SFASSET_PROJECTILE != type) { 
-		v = Vector2(0.0f, (SPEED/2));
-	} else {
+	if (SFASSET_PROJECTILE == type) { 
 		v = Vector2(0.0f, SPEED);
+	} else {
+		v = Vector2(0.0f, (SPEED/2));
 	}
 	bbox->Translate(v);
 }
@@ -149,6 +152,11 @@ bool SFAsset::IsDamaged() {
 	return (type == SFASSET_DAM_WALL);
 }
 
+void SFAsset::RepairWall() {
+	type = SFASSET_WALL;
+	sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/wall.png");
+}
+
 
 void SFAsset::Charge(int Charge, int max) {
 	if (Charge >= max) {
@@ -177,6 +185,9 @@ void SFAsset::HandleCollision() {
 		GoSouth();
 	}
 	if (SFASSET_PLAYER == type || SFASSET_COIN == type) {
+		SetNotAlive();
+	}
+	if (SFASSET_WEBBING == type || SFASSET_DAM_WALL == type) {
 		SetNotAlive();
 	}
 }
