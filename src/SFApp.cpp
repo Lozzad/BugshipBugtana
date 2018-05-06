@@ -1,6 +1,6 @@
 #include "SFApp.h"
 
-SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxCharge(100), builderState(BUILDER_LEFT), buildCharge(0), playerNorth(false), playerSouth(false), playerWest(false), playerEast(false), is_running(true), window(window) {
+SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxCharge(100), queenCharge(0), queenChargeMax(120), queenHealth(10), builderState(BUILDER_LEFT), stunTimer(0), buildCharge(0), playerNorth(false), playerSouth(false), playerWest(false), playerEast(false), is_running(true), window(window) {
     int canvas_w = window->GetWidth();
     int canvas_h = window->GetHeight();					//-> for pointers, . for the obj		
 	
@@ -29,21 +29,13 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxC
 	queen = make_shared<SFAsset>(SFASSET_QUEEN, window);
 	auto queen_pos = Point2(canvas_w / 2 - queen->GetBoundingBox()->GetWidth() / 2, 2*queen->GetBoundingBox()->GetHeight());
 	queen->SetPosition(queen_pos);
-	
-	//place the enemies
-    const int number_of_aliens = 10; 
-	for (int i = 0; i < number_of_aliens; i++) {
-        // place an alien at width/number_of_aliens * i
-        auto alien = make_shared<SFAsset>(SFASSET_ALIEN, window);
-        auto pos = Point2((canvas_w / number_of_aliens) * i + alien->GetBoundingBox()->GetWidth() / 2, 100.0f);
-        alien->SetPosition(pos);
-        aliens.push_back(alien);
-    }
 
 	//place the builder
 	builder = make_shared<SFAsset>(SFASSET_BUILDER, window);
 	auto builder_pos = Point2(canvas_w / 2 - builder->GetBoundingBox()->GetWidth() / 2, 170.0f);
 	builder->SetPosition(builder_pos);
+	builderBody = make_shared<SFAsset>(SFASSET_SPIDER, window);
+	builderBody->SetPosition(builder_pos);
 
 	//place the walls
 	const int depth_of_walls = 3;	
@@ -176,17 +168,34 @@ void SFApp::OnUpdate() {
 				builderState = BUILDER_LEFT;
 			}
 			break;
+		case STUNNED:
+			stunTimer++;
+			if (stunTimer >= 120) {
+				stunTimer = 0;
+				if (player->GetBoundingBox()->GetX() >= builder->GetBoundingBox()->GetX()) {
+					builderState = BUILDER_RIGHT;
+				} else {
+					builderState = BUILDER_LEFT;
+				}
+				break;
+			}
+				
 	}
 	//queen 'AI'
-	auto playerPos = player->GetCenter();	
-	if (playerPos.getX() >= queen->GetCenter().getX()+10) {
-		queen->GoEast();
-	} else if (playerPos.getX() <= queen->GetCenter().getX()-10) {
-		queen->GoWest();
-	} else {
-		QueenFire();
+	if (queen->IsAlive()) {
+		auto playerPos = player->GetCenter();
+		queenCharge++;	
+		if (playerPos.getX() >= queen->GetCenter().getX()+10) {
+			queen->GoEast();
+		} else if (playerPos.getX() <= queen->GetCenter().getX()-10) {
+			queen->GoWest();
+		} else {
+			if (queenCharge >= queenChargeMax) {
+				SpawnSpider();
+				queenCharge = 0;
+			}
+		}
 	}
-
 
 	if (numCoins >= 5) {
 		numCoins = 0;
@@ -201,19 +210,17 @@ void SFApp::OnUpdate() {
 		}
     }
 	
-	
     // enemies
-    for (auto a : aliens) {
-        // do something here
+    for (auto a : spiders) {    
+		a->GoSouth();
+		if (a->GetBoundingBox()->GetY() >= window->GetHeight()) {
+			a->SetNotAlive();
+		}
     }
-
-	//walls
-	for (auto w : walls) {
-	}
 
     // 2. Detect collisions
     for (auto p : projectiles) {
-        for (auto a : aliens) {
+        for (auto a : spiders) {
             if (p->CollidesWith(a)) {
                 p->HandleCollision();
                 a->HandleCollision();
@@ -222,13 +229,38 @@ void SFApp::OnUpdate() {
 		for (auto w : walls) {
 			if (p->CollidesWith(w)) {
 				p->HandleCollision();
-				if (w->IsDamaged() && RandomNumber(6) >= 3) {
+				w->DamageWall();
+				if (w->IsDamaged() && RandomNumber(6) >= 2) {
 					DropCoin(w->GetCenter());
 				}
-				w->DamageWall();
         	}
-		} 
-    }
+		}
+		if (p->CollidesWith(queen)) {
+			p->HandleCollision();			
+			if (queenHealth >= 2) {
+				queenHealth--;
+				std::cout << "Queen health remaining: " << queenHealth << std::endl;
+    		} else if (queenHealth == 1) {
+				queenHealth--;
+				std::cout << "Queen health remaining: " << queenHealth << std::endl;
+				queen->SetNotAlive();
+			}		
+		}
+		if (p->CollidesWith(builderBody)) {
+			builderState = STUNNED;
+			p->HandleCollision();
+		}
+	}
+	
+	if (player->CollidesWith(door)) {
+		std::cout << "You win!" << std::endl;
+	}
+	if (player->CollidesWith(queen)) {
+		auto start_pos = Point2(window->GetWidth() / 2 - player->GetBoundingBox()->GetWidth() / 2, window->GetHeight() - player->GetBoundingBox()->GetHeight());		
+		player->SetPosition(start_pos);
+		numCoins = 0;
+		}
+	
 
 	for (auto w : walls) {
 		if (w->CollidesWith(player)) {
@@ -246,7 +278,22 @@ void SFApp::OnUpdate() {
 			if (wb->CollidesWith(w) && w->IsDamaged()) {
 				w->RepairWall();
 				wb->SetNotAlive();
+				if (queenChargeMax >= 50) {
+					queenChargeMax -= 5;
+				}
 			}
+		}
+		if (player->CollidesWith(wb)) {
+			DecreaseShotSpeed();
+		}
+	}
+	
+	for (auto s : spiders) {
+		if (s->CollidesWith(player)) {
+			auto start_pos = Point2(window->GetWidth() / 2 - player->GetBoundingBox()->GetWidth() / 2, window->GetHeight() - player->GetBoundingBox()->GetHeight());		
+			player->SetPosition(start_pos);			
+			numCoins = 0;
+			s->HandleCollision();
 		}
 	}
 
@@ -258,15 +305,15 @@ void SFApp::OnUpdate() {
 		}
 	}	
 
-    // 3. Remove dead aliens (the long way)
+    // 3. Remove dead spiders (the long way)
     list<shared_ptr<SFAsset>> tmpA;
-    for (auto a : aliens) {
+    for (auto a : spiders) {
         if (a->IsAlive()) {
             tmpA.push_back(a);
         }
     }
-    aliens.clear();
-    aliens = list<shared_ptr<SFAsset>>(tmpA);
+    spiders.clear();
+    spiders = list<shared_ptr<SFAsset>>(tmpA);
 	
 	//Remove dead walls too
 	list<shared_ptr<SFAsset>> tmpW;
@@ -317,7 +364,7 @@ void SFApp::OnRender() {
     player->OnRender();
 	door->OnRender();
 	builder->OnRender();
-	queen->OnRender();
+	if (queen->IsAlive()) { queen->OnRender(); }
 
     for (auto p : projectiles) {
         if (p->IsAlive()) { 
@@ -325,7 +372,7 @@ void SFApp::OnRender() {
         }
     }
 
-    for (auto a : aliens) {
+    for (auto a : spiders) {
         if (a->IsAlive()) { 
             a->OnRender(); 
         }
@@ -380,6 +427,13 @@ void SFApp::IncreaseShotSpeed() {
 	}
 }
 
+void SFApp::DecreaseShotSpeed() {
+	if (maxCharge <= 125) {
+		maxCharge /= 0.8;
+		std::cout << "Max Charge: " << maxCharge << std::endl;
+	}
+}
+
 void SFApp::RepairWall() {
 	auto pos = Point2(builder->GetBoundingBox()->GetX(), builder->GetBoundingBox()->GetY());	
 	auto webbing = make_shared<SFAsset>(SFASSET_WEBBING, window);
@@ -387,5 +441,10 @@ void SFApp::RepairWall() {
 	webs.push_back(webbing);
 }
 
-void SFApp::QueenFire() {
+void SFApp::SpawnSpider() {
+	auto spider = make_shared<SFAsset>(SFASSET_SPIDER, window);
+	auto v = queen->GetCenter();	
+	auto pos = Point2(v.getX() - spider->GetBoundingBox()->GetWidth() / 2, v.getY() + (queen->GetBoundingBox()->GetHeight() / 2)); 
+	spider->SetPosition(pos);
+	spiders.push_back(spider);
 }

@@ -11,8 +11,8 @@ SFAsset::SFAsset(SFASSETTYPE type, std::shared_ptr<SFWindow> window) : type(type
 	case SFASSET_WEBBING:
 		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/webbing.png");
 		break;
-    case SFASSET_ALIEN:
-        sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/alien.png");
+    case SFASSET_SPIDER:
+        sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/spider.png");
         break;
     case SFASSET_COIN:
         sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/coin.png");
@@ -84,9 +84,14 @@ void SFAsset::OnRender() {
 
 void SFAsset::GoWest() {
 	Vector2 v = Vector2(0.0f, 0.0f);	
-	if (SFASSET_PROJECTILE == type) {    
+	if	(SFASSET_QUEEN == type) {
+		v = Vector2(-(SPEED/4), 0);
+	}
+	else if (SFASSET_PROJECTILE == type) {    
 		v = Vector2(-SPEED, 0);		
-	} else {    
+	} else if (SFASSET_SPIDER == type) {
+		v = Vector2(-(SPEED/10), 0);
+	}else {    
 		v = Vector2(-(SPEED/2), 0);
 	}	
 	bbox->Translate(v);
@@ -94,8 +99,12 @@ void SFAsset::GoWest() {
 
 void SFAsset::GoEast() {
 	Vector2 v = Vector2(0.0f, 0.0f);	
-	if (SFASSET_PROJECTILE == type) {    
+	if	(SFASSET_QUEEN == type) {
+		v = Vector2(SPEED/4, 0);
+	} else if (SFASSET_PROJECTILE == type) {    
 		v = Vector2(SPEED, 0);
+	} else if (SFASSET_SPIDER == type) {
+		v = Vector2(SPEED/10, 0);
 	} else {
 		v = Vector2((SPEED/2), 0);		
 	}
@@ -104,7 +113,9 @@ void SFAsset::GoEast() {
 
 void SFAsset::GoNorth() {
 	Vector2 v = Vector2(0.0f, 0.0f);
-	if (SFASSET_PROJECTILE == type) {    
+	if	(SFASSET_QUEEN == type) {
+		v = Vector2(0, -(SPEED/4));
+	} else if (SFASSET_PROJECTILE == type) {    
 		v = Vector2(0.0f, -SPEED);
 	} else {
 		v = Vector2(0.0f, -(SPEED/2));	    
@@ -114,10 +125,12 @@ void SFAsset::GoNorth() {
 
 void SFAsset::GoSouth() {
 	Vector2 v = Vector2(0.0f, 0.0f);	
-	if (SFASSET_PROJECTILE == type) { 
+	if	(SFASSET_QUEEN == type) {
+		v = Vector2(0, SPEED/4);
+	} else if (SFASSET_PROJECTILE == type) { 
 		v = Vector2(0.0f, SPEED);
 	} else {
-		v = Vector2(0.0f, (SPEED/2));
+		v = Vector2(0.0f, SPEED/2);
 	}
 	bbox->Translate(v);
 }
@@ -175,14 +188,20 @@ void SFAsset::Charge(int Charge, int max) {
 }
 
 void SFAsset::HandleCollision() {
-    if (SFASSET_PROJECTILE == type || SFASSET_ALIEN == type) {
+    if (SFASSET_PROJECTILE == type || SFASSET_SPIDER == type) {
         SetNotAlive();
     }
 	if (SFASSET_PROJECTILE == type || SFASSET_WALL == type) {		
 		SetNotAlive();
 	}
+	if (SFASSET_PROJECTILE == type || SFASSET_BUILDER == type) {		
+		SetNotAlive();
+	}
 	if (SFASSET_PLAYER == type || SFASSET_WALL == type) {
 		GoSouth();
+	}
+	if (SFASSET_PLAYER == type || SFASSET_SPIDER == type) {
+		SetNotAlive();
 	}
 	if (SFASSET_PLAYER == type || SFASSET_COIN == type) {
 		SetNotAlive();

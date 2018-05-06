@@ -18,7 +18,7 @@ using namespace std;
  * 2. Update game world
  * 3. Render game world
  */
-enum BUILDER_STATES {	BUILDER_LEFT, BUILDER_RIGHT, BUILDING };
+enum BUILDER_STATES {	BUILDER_LEFT, BUILDER_RIGHT, BUILDING, STUNNED };
 
 class SFApp {
 public:
@@ -34,24 +34,26 @@ public:
 	void	DropCoin(Point2 center);
 	int		RandomNumber(int scope);
 	void	IncreaseShotSpeed();
+	void	DecreaseShotSpeed();
 	void	RepairWall();
-	void	QueenFire();
+	void	SpawnSpider();
 	
 private:
     bool is_running, playerNorth, playerSouth, playerEast, playerWest;
 
-	int chargelvl, numCoins, maxCharge, builderState, buildCharge;
+	int chargelvl, numCoins, maxCharge, builderState, buildCharge, queenCharge, queenChargeMax, queenHealth, stunTimer;
 
 	shared_ptr<SFWindow> 	window;
 
     shared_ptr<SFAsset> 	player;
 	shared_ptr<SFAsset>		door;
 	shared_ptr<SFAsset>		builder;
+	shared_ptr<SFAsset>		builderBody;
 	shared_ptr<SFAsset>		queen;
     
     list<shared_ptr<SFAsset> > 	projectiles;
 	list<shared_ptr<SFAsset> > 	webs;
-    list<shared_ptr<SFAsset> > 	aliens;
+    list<shared_ptr<SFAsset> > 	spiders;
     list<shared_ptr<SFAsset> > 	coins;
 	list<shared_ptr<SFAsset> > 	walls;
 
