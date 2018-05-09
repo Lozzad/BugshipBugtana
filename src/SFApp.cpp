@@ -1,6 +1,6 @@
 #include "SFApp.h"
 
-SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxCharge(100), queenCharge(0), queenChargeMax(120), queenHealth(10), builderState(BUILDER_LEFT), stunTimer(0), buildCharge(0), playerNorth(false), playerSouth(false), playerWest(false), playerEast(false), is_running(true), window(window) {
+SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxCharge(100), queenCharge(0), queenChargeMax(120), queenHealth(10), builderState(BUILDER_LEFT), stunTimer(0), buildCharge(0), shotLvl(1), playerNorth(false), playerSouth(false), playerWest(false), playerEast(false), is_running(true), window(window) {
     int canvas_w = window->GetWidth();
     int canvas_h = window->GetHeight();					//-> for pointers, . for the obj		
 	
@@ -18,6 +18,10 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxC
 	coinUI = make_shared<SFAsset>(SFUI_COINS, window);
 	auto coinUI_pos = Point2( 10, 10);
 	coinUI->SetPosition(coinUI_pos);
+	
+	lvlUI = make_shared<SFAsset>(SFUI_LVL, window);
+	auto lvlUI_pos = Point2( 10, 20 + coinUI->GetBoundingBox()->GetHeight());
+	lvlUI->SetPosition(lvlUI_pos);
 	
 	//place the player		
 	player = make_shared<SFAsset>(SFASSET_PLAYER, window);    
@@ -292,6 +296,7 @@ void SFApp::OnUpdate() {
 			}
 		}
 		if (player->CollidesWith(wb)) {
+			wb->SetNotAlive();			
 			DecreaseShotSpeed();
 		}
 	}
@@ -376,6 +381,8 @@ void SFApp::OnRender() {
 	door->OnRender();
 	builder->OnRender();
 	coinUI->OnRender();
+	lvlUI->OnRender();
+
 	if (queen->IsAlive()) { queen->OnRender(); }
 
     for (auto p : projectiles) {
@@ -433,17 +440,19 @@ int SFApp::RandomNumber( int scope ) {
 }
 
 void SFApp::IncreaseShotSpeed() {
-	if (maxCharge >= 50) {
+	if (shotLvl <= 5) {
+		shotLvl++;
 		maxCharge *= 0.8;
-		std::cout << "Max Charge: " << maxCharge << std::endl;
+		lvlUI->UpdateLevel( shotLvl );
 	}
 }
 
 void SFApp::DecreaseShotSpeed() {
-	if (maxCharge <= 125) {
+	if (shotLvl >= 1) {
+		shotLvl--;
 		maxCharge /= 0.8;
-		std::cout << "Max Charge: " << maxCharge << std::endl;
-	}
+		lvlUI->UpdateLevel( shotLvl );
+	}	
 }
 
 void SFApp::RepairWall() {

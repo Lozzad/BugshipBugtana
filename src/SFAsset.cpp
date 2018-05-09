@@ -232,9 +232,7 @@ void SFAsset::LoadFromRenderedText ( string textureText, SDL_Color textColor) {
 		throw SFException( "Couldnt render text surface (SDL_ttf)" );
 	} else {
 		sprite = SDL_CreateTextureFromSurface( sf_window->getRenderer(), textSurface );
-		if (sprite == NULL) {
-			throw SFException( "Cant create texture from text" );
-		} 
+		if (sprite == NULL) { throw SFException( "Cant create texture from text" );} 
 	}
 }
 
@@ -248,13 +246,13 @@ void SFAsset::UpdateCoins( int numCoins ) {
 	LoadFromRenderedText( text, {0,0,0});
 }
 
-/*void SFAsset::UpdateLevel( int maxCharge ) {
+void SFAsset::UpdateLevel( int shotLvl ) {
 	sprite = NULL;	
 	string text = "Shot Level: ";
-	//stops the text from messing up
-	if (maxCharge == 100) { text += to_string(1) }
-	else if (maxCharge == 100*0.8) { text += to_string(2) }
-	else if (maxCharge == 100*0.8*0.8) { text += to_string(3) }
+
+	if (shotLvl == 5) { text += "MAX"; }
+	else { text += to_string(shotLvl); }
+
 	LoadFromRenderedText( text, {0,0,0});
-} */
+}
 

@@ -54,6 +54,7 @@ public:
     virtual shared_ptr<SFBoundingBox> 	GetBoundingBox();
 	virtual void		LoadFromRenderedText ( string textureText, SDL_Color textColor);
 	virtual void		UpdateCoins( int numCoins );
+	virtual void		UpdateLevel( int shotLvl );
     
 private:   
 	const float					SPEED = 4.0f;	

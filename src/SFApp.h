@@ -41,7 +41,7 @@ public:
 private:
     bool is_running, playerNorth, playerSouth, playerEast, playerWest;
 
-	int chargelvl, numCoins, maxCharge, builderState, buildCharge, queenCharge, queenChargeMax, queenHealth, stunTimer;
+	int chargelvl, numCoins, maxCharge, builderState, buildCharge, queenCharge, queenChargeMax, queenHealth, stunTimer, shotLvl;
 
 	shared_ptr<SFWindow> 	window;
 
@@ -51,6 +51,7 @@ private:
 	shared_ptr<SFAsset>		builderBody;
 	shared_ptr<SFAsset>		queen;
 	shared_ptr<SFAsset>		coinUI;
+	shared_ptr<SFAsset>		lvlUI;
     
     list<shared_ptr<SFAsset> > 	projectiles;
 	list<shared_ptr<SFAsset> > 	webs;
