@@ -1,9 +1,9 @@
 # Bugship Bugtana #
 
-This is my Uni coursework for my 'Introduction to games development' module, based off this code:
+This is my Uni coursework for my 'Introduction to games development' module, based off this code: https://github.com/AlmasB/StarshipFontana
 
 ## Installation ##
-On Fedora (64bit) you can install the SDL2 library as follows: https://github.com/AlmasB/StarshipFontana
+On Fedora (64bit) you can install the SDL2 library as follows: 
 
 ```bash
 $ sudo dnf install SDL2-devel.x86_64 SDL2_image-devel.x86_64 SDL2.x86_64 SDL2_image.x86_64
