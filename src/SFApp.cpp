@@ -22,6 +22,12 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxC
 	lvlUI = make_shared<SFAsset>(SFUI_LVL, window);
 	auto lvlUI_pos = Point2( 10, 20 + coinUI->GetBoundingBox()->GetHeight());
 	lvlUI->SetPosition(lvlUI_pos);
+
+	//place the win screen but dont show it til end (probably change this)
+	winGame = make_shared<SFAsset>(SFASSET_WIN, window);
+	auto win_pos = Point2(0,0);	
+	winGame->SetPosition(win_pos);
+	winGame->SetNotAlive();
 	
 	//place the player		
 	player = make_shared<SFAsset>(SFASSET_PLAYER, window);    
@@ -100,7 +106,7 @@ void SFApp::OnEvent(SFEvent& event) {
        		playerEast = false;
        		break;
 		case SFEVENT_FIRE:
-			if (chargelvl >= maxCharge) {
+			if (player->IsAlive() && chargelvl >= maxCharge) {
 				chargelvl = 0;
 				FireProjectile();
 				Mix_PlayChannel(-1, mothLaser, 0);
@@ -151,43 +157,44 @@ void SFApp::OnUpdate() {
 		}
 	}
 	//builder 'AI'
-	switch (builderState) {
-		case BUILDER_LEFT:
-			builder->GoWest();
-			if (builder->GetBoundingBox()->GetX() <= 0) {
-				builderState = BUILDER_RIGHT;
-			}
-			break;
-		case BUILDER_RIGHT:
-			builder->GoEast();
-			if (builder->GetBoundingBox()->GetX() >= window->GetWidth() - builder->GetBoundingBox()->GetWidth()) {
-				builderState = BUILDER_LEFT;
-			}
-			break;
-		case BUILDING:
-			buildCharge++;			
-			if (buildCharge >= 50) {
-				RepairWall();
-				buildCharge = 0;
-			}
-			if (player->GetBoundingBox()->GetX() >= builder->GetBoundingBox()->GetX()) {
-				builderState = BUILDER_RIGHT;
-			} else {
-				builderState = BUILDER_LEFT;
-			}
-			break;
-		case STUNNED:
-			stunTimer++;
-			if (stunTimer >= 120) {
-				stunTimer = 0;
+	if (builder->IsAlive()) {
+		switch (builderState) {
+			case BUILDER_LEFT:
+				builder->GoWest();
+				if (builder->GetBoundingBox()->GetX() <= 0) {
+					builderState = BUILDER_RIGHT;
+				}
+				break;
+			case BUILDER_RIGHT:
+				builder->GoEast();
+				if (builder->GetBoundingBox()->GetX() >= window->GetWidth() - builder->GetBoundingBox()->GetWidth()) {
+					builderState = BUILDER_LEFT;
+				}
+				break;
+			case BUILDING:
+				buildCharge++;			
+				if (buildCharge >= 50) {
+					RepairWall();
+					buildCharge = 0;
+				}
 				if (player->GetBoundingBox()->GetX() >= builder->GetBoundingBox()->GetX()) {
 					builderState = BUILDER_RIGHT;
 				} else {
 					builderState = BUILDER_LEFT;
 				}
 				break;
-			}
-				
+			case STUNNED:
+				stunTimer++;
+				if (stunTimer >= 120) {
+					stunTimer = 0;
+					if (player->GetBoundingBox()->GetX() >= builder->GetBoundingBox()->GetX()) {
+						builderState = BUILDER_RIGHT;
+					} else {
+						builderState = BUILDER_LEFT;
+					}
+					break;
+				}
+		}					
 	}
 	auto builderPos = builder->GetPosition();	
 	builderBody->SetPosition(builderPos);
@@ -264,9 +271,9 @@ void SFApp::OnUpdate() {
 	}
 	
 	if (player->CollidesWith(door)) {
-		std::cout << "You win!" << std::endl;
+		EndGame();
 	}
-	if (player->CollidesWith(queen)) {
+	if (player->CollidesWith(queen) && queen->IsAlive()) {
 		auto start_pos = Point2(window->GetWidth() / 2 - player->GetBoundingBox()->GetWidth() / 2, window->GetHeight() - player->GetBoundingBox()->GetHeight());		
 		player->SetPosition(start_pos);
 		numCoins = 0;
@@ -308,7 +315,6 @@ void SFApp::OnUpdate() {
 			numCoins = 0;
 			s->HandleCollision();
 			coinUI->UpdateCoins(numCoins);
-			std::cout << "coins reset" << std::endl;
 		}
 	}
 
@@ -317,7 +323,6 @@ void SFApp::OnUpdate() {
 			c->HandleCollision();
 			numCoins++;
 			coinUI->UpdateCoins(numCoins);
-			std::cout << "Gold Collected" << numCoins << std::endl;
 		}
 	}	
 
@@ -377,13 +382,14 @@ void SFApp::OnRender() {
     window->ClearScreen();
 
     // 2. Draw game objects off-screen
-    player->OnRender();
-	door->OnRender();
-	builder->OnRender();
-	coinUI->OnRender();
-	lvlUI->OnRender();
-
-	if (queen->IsAlive()) { queen->OnRender(); }
+    if (player->IsAlive()) 	{player->OnRender();}
+	if (door->IsAlive()) 	{door->OnRender();}
+	if (builder->IsAlive())	{builder->OnRender();}
+	if (coinUI->IsAlive())	{coinUI->OnRender();}
+	if (lvlUI->IsAlive())	{lvlUI->OnRender();}
+	if (queen->IsAlive()) 	{queen->OnRender();}
+	if (winGame->IsAlive()) {winGame->OnRender();}
+	
 
     for (auto p : projectiles) {
         if (p->IsAlive()) { 
@@ -468,4 +474,29 @@ void SFApp::SpawnSpider() {
 	auto pos = Point2(v.getX() - spider->GetBoundingBox()->GetWidth() / 2, v.getY() + (queen->GetBoundingBox()->GetHeight() / 2)); 
 	spider->SetPosition(pos);
 	spiders.push_back(spider);
+}
+
+void SFApp::EndGame() {
+	player->SetNotAlive();
+	door->SetNotAlive();
+	queen->SetNotAlive();
+	builder->SetNotAlive();
+	coinUI->SetNotAlive();
+	lvlUI->SetNotAlive();
+	for ( auto p : projectiles) {
+		p->SetNotAlive();
+	}
+	for ( auto w : walls) {
+		w->SetNotAlive();
+	}
+	for ( auto s : spiders) {
+		s->SetNotAlive();
+	}
+	for ( auto wb : webs) {
+		wb->SetNotAlive();
+	}
+	for ( auto c : coins) {
+		c->SetNotAlive();
+	}
+	winGame->SetWinAlive();
 }

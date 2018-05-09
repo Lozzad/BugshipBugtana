@@ -37,6 +37,7 @@ public:
 	void	DecreaseShotSpeed();
 	void	RepairWall();
 	void	SpawnSpider();
+	void	EndGame();
 	
 private:
     bool is_running, playerNorth, playerSouth, playerEast, playerWest;
@@ -52,6 +53,7 @@ private:
 	shared_ptr<SFAsset>		queen;
 	shared_ptr<SFAsset>		coinUI;
 	shared_ptr<SFAsset>		lvlUI;
+	shared_ptr<SFAsset>		winGame;
     
     list<shared_ptr<SFAsset> > 	projectiles;
 	list<shared_ptr<SFAsset> > 	webs;

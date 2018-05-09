@@ -38,6 +38,9 @@ SFAsset::SFAsset(SFASSETTYPE type, std::shared_ptr<SFWindow> window) : type(type
 	case SFUI_LVL: 
 		LoadFromRenderedText ( "Shot Level: 1", {0,0,0});
 		break;
+	case SFASSET_WIN:
+		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/win.png");
+		break;
     }
 
     if (!sprite) {
@@ -153,6 +156,10 @@ void SFAsset::SetNotAlive() {
 	type = SFASSET_DEAD;
 }
 
+void SFAsset::SetWinAlive() {
+	type = SFASSET_WIN;
+}
+
 bool SFAsset::IsAlive() {
     return (SFASSET_DEAD != type);
 }
@@ -226,7 +233,7 @@ void SFAsset::HitWall( bool north, bool south, bool east, bool west) {
 
 //for ttf
 void SFAsset::LoadFromRenderedText ( string textureText, SDL_Color textColor) {
-	gFont = TTF_OpenFont("assets/theFont.ttf", 13);
+	gFont = TTF_OpenFont("assets/theFont.ttf", 20);
 	SDL_Surface* textSurface = TTF_RenderText_Solid( gFont, textureText.c_str(), textColor );
 	if (textSurface == NULL) {
 		throw SFException( "Couldnt render text surface (SDL_ttf)" );

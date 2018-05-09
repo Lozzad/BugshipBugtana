@@ -23,7 +23,7 @@ using namespace std;
  * enum to mark the type of the SFAsset.  If we add more asset types then
  * the subclassing strategy becomes a better option.
  */
-enum SFASSETTYPE { SFASSET_DEAD, SFASSET_PLAYER, SFASSET_PROJECTILE, SFASSET_WEBBING, SFASSET_SPIDER, SFASSET_COIN, SFASSET_WALL, SFASSET_DAM_WALL, SFASSET_DOOR, SFASSET_BUILDER, SFASSET_QUEEN, SFUI_COINS, SFUI_LVL };
+enum SFASSETTYPE { SFASSET_DEAD, SFASSET_PLAYER, SFASSET_PROJECTILE, SFASSET_WEBBING, SFASSET_SPIDER, SFASSET_COIN, SFASSET_WALL, SFASSET_DAM_WALL, SFASSET_DOOR, SFASSET_BUILDER, SFASSET_QUEEN, SFUI_COINS, SFUI_LVL, SFASSET_WIN };
 
 class SFAsset {
 public:
@@ -40,6 +40,7 @@ public:
     virtual void      	GoNorth();
     virtual void		GoSouth();
     virtual void      	SetNotAlive();
+	virtual void		SetWinAlive();
     virtual bool      	IsAlive();
 	virtual void		DamageWall();
 	virtual bool		IsDamaged();
