@@ -24,7 +24,7 @@ $ g++ -o bugship *.o -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 which will produce an executable file called "bugship" in the
 top-level directory.  To execute this file do the following
 
-`$ ./starship`
+`$ ./bugship`
  
 from the top-level directory.  The game will expect to find the
 `assets` directory under its current working directory.

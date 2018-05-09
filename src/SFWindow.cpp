@@ -3,7 +3,7 @@
 SFWindow::SFWindow(Uint32 w, Uint32 h, SDL_Color drawColor) {
     
     window = SDL_CreateWindow(
-        "Starbug Bugtana",
+        "Bugship Bugtana: Escape from SpiderJail",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         w, h,
         SDL_WINDOW_SHOWN
