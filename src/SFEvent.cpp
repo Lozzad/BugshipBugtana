@@ -31,6 +31,9 @@ SFEvent::SFEvent(const SDL_Event & event) {
         	case SDLK_q:
             	code = SFEVENT_QUIT;
             	break;
+			case SDLK_m:
+				code = SFEVENT_MUTE;
+				break;
 		}
 		break;
    case SDL_KEYUP:

@@ -41,6 +41,7 @@ shared_ptr<SFWindow> InitGraphics() {
 		throw SFException("Failed to initialise SDL_ttf");
 	}
 
+	//set window dimensions
     Uint32 width = 640;
     Uint32 height = 480;
     

@@ -91,6 +91,7 @@ void SFAsset::OnRender() {
     SDL_RenderCopy(sf_window->getRenderer(), sprite, NULL, &rect);
 }
 
+//used if statements to alter speeds for different objects, not very pretty but works
 void SFAsset::GoWest() {
 	Vector2 v = Vector2(0.0f, 0.0f);	
 	if	(SFASSET_QUEEN == type) {
@@ -156,6 +157,7 @@ void SFAsset::SetNotAlive() {
 	type = SFASSET_DEAD;
 }
 
+//used to reveal the win screen constantly lurking just out of sight
 void SFAsset::SetWinAlive() {
 	type = SFASSET_WIN;
 }
@@ -183,7 +185,7 @@ void SFAsset::RepairWall() {
 	sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/wall.png");
 }
 
-
+//Charge function updates the player sprite depending on the charge of their shot
 void SFAsset::Charge(int Charge, int max) {
 	if (Charge >= max) {
  		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/player4.png");
@@ -224,6 +226,7 @@ void SFAsset::HandleCollision() {
 	}
 }
 
+//static barriers that work from any direction
 void SFAsset::HitWall( bool north, bool south, bool east, bool west) {
 	if (north) { GoSouth(); }
 	if (south) { GoNorth(); }
@@ -231,7 +234,7 @@ void SFAsset::HitWall( bool north, bool south, bool east, bool west) {
 	if (west)  { GoEast(); }
 }
 
-//for ttf
+//renders text as a font - created using lazyfoo productions' guide as a base 
 void SFAsset::LoadFromRenderedText ( string textureText, SDL_Color textColor) {
 	gFont = TTF_OpenFont("assets/theFont.ttf", 20);
 	SDL_Surface* textSurface = TTF_RenderText_Solid( gFont, textureText.c_str(), textColor );
@@ -243,7 +246,7 @@ void SFAsset::LoadFromRenderedText ( string textureText, SDL_Color textColor) {
 	}
 }
 
-//update the UI, could make this one function but no time
+//these 2 functions update the UI, could make this nicer but have run out of time
 void SFAsset::UpdateCoins( int numCoins ) {
 	sprite = NULL;	
 	string text = "Coins: ";

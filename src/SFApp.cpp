@@ -77,6 +77,13 @@ void SFApp::OnEvent(SFEvent& event) {
    		case SFEVENT_QUIT:
        		is_running = false;
        		break;
+		case SFEVENT_MUTE:
+			if (Mix_PausedMusic() == 1) {
+				Mix_ResumeMusic();
+			} else {
+				Mix_PauseMusic();
+			}
+			break;
    		case SFEVENT_UPDATE:
        		OnUpdate();
        		OnRender();
@@ -157,6 +164,9 @@ void SFApp::OnUpdate() {
 		}
 	}
 	//builder 'AI'
+	//builder will move left/right until it is in line with a broken wall, at which point it will start building
+	//building = fires a projectile at the web which heals it if it hits
+	//the hits are detected by the builder's very very long hitbox (collision detection for bullets has a different body)
 	if (builder->IsAlive()) {
 		switch (builderState) {
 			case BUILDER_LEFT:
@@ -198,7 +208,10 @@ void SFApp::OnUpdate() {
 	}
 	auto builderPos = builder->GetPosition();	
 	builderBody->SetPosition(builderPos);
+	
 	//queen 'AI'
+	//follows player on the x axis, spawns spiders (more if the builder has been busy)
+	//can die but it's not obvious from the game, should've put a health bar in
 	if (queen->IsAlive()) {
 		auto playerPos = player->GetCenter();
 		queenCharge++;	
@@ -213,7 +226,8 @@ void SFApp::OnUpdate() {
 			}
 		}
 	}
-
+	
+	//whenever the player gets 5 coins their gun gets better (to a point)
 	if (numCoins >= 5) {
 		numCoins = 0;
 		IncreaseShotSpeed();
@@ -253,6 +267,7 @@ void SFApp::OnUpdate() {
 				}
         	}
 		}
+		//again, with more time i'd add a queen health bar but 'cout' will do		
 		if (p->CollidesWith(queen)) {
 			p->HandleCollision();			
 			if (queenHealth >= 2) {
@@ -308,6 +323,7 @@ void SFApp::OnUpdate() {
 		}
 	}
 	
+	//hitting a spider resets player pos and coins (but not gun lvl - hard mode maybe??)
 	for (auto s : spiders) {
 		if (s->CollidesWith(player)) {
 			auto start_pos = Point2(window->GetWidth() / 2 - player->GetBoundingBox()->GetWidth() / 2, window->GetHeight() - player->GetBoundingBox()->GetHeight());		
@@ -382,6 +398,8 @@ void SFApp::OnRender() {
     window->ClearScreen();
 
     // 2. Draw game objects off-screen
+
+	//these if statements didnt use to exist but I added them to do the win screen
     if (player->IsAlive()) 	{player->OnRender();}
 	if (door->IsAlive()) 	{door->OnRender();}
 	if (builder->IsAlive())	{builder->OnRender();}
@@ -425,7 +443,7 @@ void SFApp::OnRender() {
     window->ShowScreen();
 }
 		
-
+//fires a projectile north
 void SFApp::FireProjectile() {
     auto bullet = make_shared<SFAsset>(SFASSET_PROJECTILE, window);
     auto v = player->GetCenter();
@@ -434,17 +452,20 @@ void SFApp::FireProjectile() {
     projectiles.push_back(bullet);
 }
 
+//drops a coin from the other object
 void SFApp::DropCoin(Point2 center) {
     auto coin = make_shared<SFAsset>(SFASSET_COIN, window);
     coin->SetPosition(center);
     coins.push_back(coin);
 }
 
+//used to make coin drops rarer, giving a sense of pride and accomplishment
 int SFApp::RandomNumber( int scope ) {
 	int number = rand() % (scope);
 	return number;
 }
 
+//increases the speed at which the player can shoot
 void SFApp::IncreaseShotSpeed() {
 	if (shotLvl <= 5) {
 		shotLvl++;
@@ -453,6 +474,7 @@ void SFApp::IncreaseShotSpeed() {
 	}
 }
 
+//decreases the speed at which the player can shoot, pretty rare occurence
 void SFApp::DecreaseShotSpeed() {
 	if (shotLvl >= 1) {
 		shotLvl--;
@@ -461,6 +483,7 @@ void SFApp::DecreaseShotSpeed() {
 	}	
 }
 
+//heals a wall if its damaged
 void SFApp::RepairWall() {
 	auto pos = Point2(builder->GetBoundingBox()->GetX(), builder->GetBoundingBox()->GetY());	
 	auto webbing = make_shared<SFAsset>(SFASSET_WEBBING, window);
@@ -468,6 +491,7 @@ void SFApp::RepairWall() {
 	webs.push_back(webbing);
 }
 
+//spawns a spider
 void SFApp::SpawnSpider() {
 	auto spider = make_shared<SFAsset>(SFASSET_SPIDER, window);
 	auto v = queen->GetCenter();	
@@ -476,6 +500,7 @@ void SFApp::SpawnSpider() {
 	spiders.push_back(spider);
 }
 
+//hides everything except the end game message
 void SFApp::EndGame() {
 	player->SetNotAlive();
 	door->SetNotAlive();
