@@ -32,6 +32,12 @@ SFAsset::SFAsset(SFASSETTYPE type, std::shared_ptr<SFWindow> window) : type(type
 	case SFASSET_QUEEN:
 		sprite = IMG_LoadTexture(sf_window->getRenderer(), "assets/queen.png");
 		break;
+	case SFUI_COINS:
+		LoadFromRenderedText ( "Coins: 0", {0,0,0});
+		break;
+	case SFUI_LVL: 
+		LoadFromRenderedText ( "Shot Level: 1", {0,0,0});
+		break;
     }
 
     if (!sprite) {
@@ -217,3 +223,38 @@ void SFAsset::HitWall( bool north, bool south, bool east, bool west) {
 	if (east)  { GoWest(); }
 	if (west)  { GoEast(); }
 }
+
+//for ttf
+void SFAsset::LoadFromRenderedText ( string textureText, SDL_Color textColor) {
+	gFont = TTF_OpenFont("assets/theFont.ttf", 13);
+	SDL_Surface* textSurface = TTF_RenderText_Solid( gFont, textureText.c_str(), textColor );
+	if (textSurface == NULL) {
+		throw SFException( "Couldnt render text surface (SDL_ttf)" );
+	} else {
+		sprite = SDL_CreateTextureFromSurface( sf_window->getRenderer(), textSurface );
+		if (sprite == NULL) {
+			throw SFException( "Cant create texture from text" );
+		} 
+	}
+}
+
+//update the UI, could make this one function but no time
+void SFAsset::UpdateCoins( int numCoins ) {
+	sprite = NULL;	
+	string text = "Coins: ";
+	//stops the text from messing up
+	text += to_string(numCoins);
+	std::cout << text << std::endl;
+	LoadFromRenderedText( text, {0,0,0});
+}
+
+/*void SFAsset::UpdateLevel( int maxCharge ) {
+	sprite = NULL;	
+	string text = "Shot Level: ";
+	//stops the text from messing up
+	if (maxCharge == 100) { text += to_string(1) }
+	else if (maxCharge == 100*0.8) { text += to_string(2) }
+	else if (maxCharge == 100*0.8*0.8) { text += to_string(3) }
+	LoadFromRenderedText( text, {0,0,0});
+} */
+

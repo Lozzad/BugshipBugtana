@@ -50,6 +50,7 @@ private:
 	shared_ptr<SFAsset>		builder;
 	shared_ptr<SFAsset>		builderBody;
 	shared_ptr<SFAsset>		queen;
+	shared_ptr<SFAsset>		coinUI;
     
     list<shared_ptr<SFAsset> > 	projectiles;
 	list<shared_ptr<SFAsset> > 	webs;

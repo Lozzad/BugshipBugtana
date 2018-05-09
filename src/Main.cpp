@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <memory>
 #include <SDL_mixer.h>
+#include <SDL_ttf.h>
 
 using namespace std;
 
@@ -33,6 +34,11 @@ shared_ptr<SFWindow> InitGraphics() {
 	//initialise SDL audio mixer
 	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 ) {
 		throw SFException("Failed to initialise mixer");
+	}
+	
+	//initialise SDL_ttf
+	if ( TTF_Init() == -1) {
+		throw SFException("Failed to initialise SDL_ttf");
 	}
 
     Uint32 width = 640;

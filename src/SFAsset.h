@@ -8,6 +8,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
+#include <SDL_ttf.h>
 
 using namespace std;
 
@@ -22,7 +23,7 @@ using namespace std;
  * enum to mark the type of the SFAsset.  If we add more asset types then
  * the subclassing strategy becomes a better option.
  */
-enum SFASSETTYPE { SFASSET_DEAD, SFASSET_PLAYER, SFASSET_PROJECTILE, SFASSET_WEBBING, SFASSET_SPIDER, SFASSET_COIN, SFASSET_WALL, SFASSET_DAM_WALL, SFASSET_DOOR, SFASSET_BUILDER, SFASSET_QUEEN };
+enum SFASSETTYPE { SFASSET_DEAD, SFASSET_PLAYER, SFASSET_PROJECTILE, SFASSET_WEBBING, SFASSET_SPIDER, SFASSET_COIN, SFASSET_WALL, SFASSET_DAM_WALL, SFASSET_DOOR, SFASSET_BUILDER, SFASSET_QUEEN, SFUI_COINS, SFUI_LVL };
 
 class SFAsset {
 public:
@@ -49,8 +50,10 @@ public:
 	virtual void 		HitWall( bool north, bool south, bool east, bool west);
 	
 
-    virtual bool                      CollidesWith(shared_ptr<SFAsset>);
-    virtual shared_ptr<SFBoundingBox> GetBoundingBox();
+    virtual bool        CollidesWith(shared_ptr<SFAsset>);
+    virtual shared_ptr<SFBoundingBox> 	GetBoundingBox();
+	virtual void		LoadFromRenderedText ( string textureText, SDL_Color textColor);
+	virtual void		UpdateCoins( int numCoins );
     
 private:   
 	const float					SPEED = 4.0f;	
@@ -59,6 +62,8 @@ private:
     shared_ptr<SFBoundingBox>   bbox;
     SFASSETTYPE                 type;
     std::shared_ptr<SFWindow>   sf_window;
+	SDL_Color 					textColor;
+	TTF_Font* 					gFont;
 };
 
 #endif

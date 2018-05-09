@@ -13,8 +13,12 @@ SFApp::SFApp(std::shared_ptr<SFWindow> window) : chargelvl(0), numCoins(0), maxC
 	if (mothLaser == NULL) {
 		throw SFException ( "Failed to load moth laser noise" );
 	}
-
-
+	
+	//place the ui (in development)
+	coinUI = make_shared<SFAsset>(SFUI_COINS, window);
+	auto coinUI_pos = Point2( 10, 10);
+	coinUI->SetPosition(coinUI_pos);
+	
 	//place the player		
 	player = make_shared<SFAsset>(SFASSET_PLAYER, window);    
 	auto player_pos = Point2(canvas_w / 2 - player->GetBoundingBox()->GetWidth() / 2, canvas_h - player->GetBoundingBox()->GetHeight());
@@ -130,8 +134,8 @@ void SFApp::OnUpdate() {
 	//update player charge
 	chargelvl++;
 	player->Charge(chargelvl, maxCharge);
-
-    // 1. Move / update game objects
+	
+	// 1. Move / update game objects
     for (auto p : projectiles) {
         if (p->IsAlive()) {
 			p->GoNorth();
@@ -202,6 +206,7 @@ void SFApp::OnUpdate() {
 	if (numCoins >= 5) {
 		numCoins = 0;
 		IncreaseShotSpeed();
+		coinUI->UpdateCoins(numCoins);
 	}
 
     // coins
@@ -261,6 +266,7 @@ void SFApp::OnUpdate() {
 		auto start_pos = Point2(window->GetWidth() / 2 - player->GetBoundingBox()->GetWidth() / 2, window->GetHeight() - player->GetBoundingBox()->GetHeight());		
 		player->SetPosition(start_pos);
 		numCoins = 0;
+		coinUI->UpdateCoins(numCoins);
 		}
 	
 
@@ -296,6 +302,8 @@ void SFApp::OnUpdate() {
 			player->SetPosition(start_pos);			
 			numCoins = 0;
 			s->HandleCollision();
+			coinUI->UpdateCoins(numCoins);
+			std::cout << "coins reset" << std::endl;
 		}
 	}
 
@@ -303,6 +311,7 @@ void SFApp::OnUpdate() {
 		if (c->CollidesWith(player)) {
 			c->HandleCollision();
 			numCoins++;
+			coinUI->UpdateCoins(numCoins);
 			std::cout << "Gold Collected" << numCoins << std::endl;
 		}
 	}	
@@ -366,6 +375,7 @@ void SFApp::OnRender() {
     player->OnRender();
 	door->OnRender();
 	builder->OnRender();
+	coinUI->OnRender();
 	if (queen->IsAlive()) { queen->OnRender(); }
 
     for (auto p : projectiles) {
