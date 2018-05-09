@@ -31,7 +31,7 @@ from the top-level directory.  The game will expect to find the
 
 ## Credits ##
 The majority of sprites in this game are original 'works' by me (Laurie Dibble), however the projectile sprite is a modified version of the original projectile sprite, taken from
-[SpriteLib](http://www.widgetworx.com/widgetworx/portfolio/spritelib.html) and are used
+[SpriteLib](http://www.widgetworx.com/widgetworx/portfolio/spritelib.html) and used
 under the terms of the [CPL 1.0](http://opensource.org/licenses/cpl1.0.php).
 
 The music has been provided by Ren Brosche, so send all the hatemail to him.
