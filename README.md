@@ -2,6 +2,8 @@
 
 This is my Uni coursework for my 'Introduction to games development' module, based off this code: https://github.com/AlmasB/StarshipFontana
 
+All modifications are my own, and the complicated parts are adapted from the SDL2 tutorials found on [Lazyfoo Productions](http://lazyfoo.net/tutorials/SDL/), specifically this one on [SDL_ttf](http://lazyfoo.net/tutorials/SDL/16_true_type_fonts/index.php) and this one on [SDL_mixer](http://lazyfoo.net/tutorials/SDL/21_sound_effects_and_music/index.php).  
+
 ## Installation ##
 On Fedora (64bit) you can install the SDL2 library as follows: 
 
